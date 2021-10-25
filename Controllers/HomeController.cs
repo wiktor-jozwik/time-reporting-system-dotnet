@@ -7,31 +7,49 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NtrTrs.Models;
 
+using System;
+using System.Text.Json;
+
 namespace NtrTrs.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public IActionResult Index(string name = "kowalski", string date = null)
         {
-            _logger = logger;
-        }
+            DateTime dateTime;
 
-        public IActionResult Index()
-        {
+            if (date != null)
+            {
+                try {
+                    dateTime = DateTime.ParseExact(date, "dd/MM/yyyy", null);
+
+                } catch (System.FormatException) {
+                    return View("Error");
+                }
+            } else {
+                dateTime = DateTime.Now;
+            }
+
+            string dateString = dateTime.ToString("yyyy-MM");
+
+            UserModel user;
+            string fileName = $"Data/entries/{name}-{dateString}.json";
+
+
+            try {
+                ViewData["Date"] = dateTime.ToShortDateString();
+                ViewData["UserName"] = name;
+
+                string jsonString = System.IO.File.ReadAllText(fileName);
+                user = JsonSerializer.Deserialize<UserModel>(jsonString);
+            } catch (System.IO.FileNotFoundException) { 
+                return View("FileNotFound");
+            }
+
+            ViewData["User"] = user;
+
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

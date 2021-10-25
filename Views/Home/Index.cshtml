@@ -1,8 +1,83 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    string dateString = (string) ViewData["Date"];
+    string userName = (string) ViewData["UserName"];
+    UserModel user = (UserModel) ViewData["User"];
+}
+
+@section scripts{ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#txtDate').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                format: "dd/mm/yyyy",
+                language: "tr"
+            });
+        });
+    </script>
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2 class="display-4">Entries for @userName on @dateString</h2>
+    <h3 class="display-4">User entries:</h1>
+    
+    <table class="table">
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">Code</th>
+        <th scope="col">Date</th>
+        <th scope="col">Subcode</th>
+        <th scope="col">Time</th>
+        <th scope="col">Description</th>
+        </tr>
+    </thead>
+    @{
+        int entryIndex = 0;
+        foreach(EntryModel entry in user.entries) {
+            entryIndex++;
+            <tbody>
+                <tr>
+                    <th scope="row">@entryIndex</th>
+                    <td>@entry.code</td>
+                    <td>@entry.date.ToShortDateString()</td>
+                    <td>@entry.subcode</td>
+                    <td>@entry.time</td>
+                    <td>@entry.description</td>
+                </tr>
+            </tbody>
+        }
+    }
+    </table>
+
+    <h3 class="display-4">User accepted entries:</h1>
+    <table class="table">
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">Code</th>
+        <th scope="col">Time</th>
+        </tr>
+    </thead>
+    @{
+        int acceptedIndex = 0;
+
+        foreach(AcceptedEntryModel accepted in user.accepted) {
+            acceptedIndex++;
+            <tbody>
+                <tr>
+                    <th scope="row">@acceptedIndex</th>
+                    <td>@accepted.code</td>
+                    <td>@accepted.time</td>
+                </tr>
+            </tbody>
+        }
+    }
+    </table>
+
+
+    <partial name="_CalendarPartial" />
+
 </div>
