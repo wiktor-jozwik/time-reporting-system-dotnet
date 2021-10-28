@@ -9,10 +9,13 @@ namespace NtrTrs.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index(string name = "kowalski", string dateString = null)
+        public IActionResult Index(string userName, string dateString = null)
         {
+            System.Console.WriteLine(userName);
+            ViewData["UserName"] = userName;
+
             DateTime dateTime;
-            List<EntryModel> userEntries = null;
+            List<EntryModel> monthEntries = null;
 
             if (dateString == null) {
                 dateTime = DateTime.Now;
@@ -27,8 +30,8 @@ namespace NtrTrs.Controllers
             ViewData["DateTime"] = dateTime;
 
             try {
-                UserModel userData = this.fetchDataFromJson(this.getFileNameFromDate(name, dateTime));
-                userEntries = userData.entries.FindAll(e => e.date.Date == dateTime.Date);
+                MonthModel monthData = JsonParserSingleton.readJson<MonthModel>(this.getFileNameFromDate(userName, dateTime));
+                monthEntries = monthData.entries.FindAll(e => e.date.Date == dateTime.Date);
 
             } catch (System.IO.FileNotFoundException) {
 
@@ -36,17 +39,10 @@ namespace NtrTrs.Controllers
                 return View("Error");
             }
 
-            ViewData["UserEntries"] = userEntries;
+            ViewData["monthEntries"] = monthEntries;
 
             return View();
         }
-
-        private UserModel fetchDataFromJson(string fileName) {
-
-            string jsonString = System.IO.File.ReadAllText(fileName);
-            return JsonSerializer.Deserialize<UserModel>(jsonString);
-        }
-
         private DateTime getRequestedDateTime(string dateString) {
             DateTime dateTime =  DateTime.ParseExact(dateString, "yyyy-MM-dd", null);
             
@@ -54,8 +50,6 @@ namespace NtrTrs.Controllers
         }
 
         private string getFileNameFromDate(string name, DateTime date) {
-            ViewData["UserName"] = name;
-
             return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";
         }
 

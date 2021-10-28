@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
     DateTime dateTime = (DateTime) ViewData["DateTime"];
     string userName = (string) ViewData["UserName"];
-    List<EntryModel> userEntries = (List<EntryModel>) ViewData["UserEntries"];
+    List<EntryModel> monthEntries = (List<EntryModel>) ViewData["monthEntries"];
 }
 
 @section scripts{ 
@@ -21,11 +21,11 @@
 
 <div class="text-center">
     @{
-        if (userEntries == null || userEntries.Count == 0) {
+        if (monthEntries == null || monthEntries.Count == 0) {
             <h3 class="display-4">Entries for @userName on @dateTime.ToShortDateString() does not exists.</h3>
         } else {
 <h3 class="display-4">Entries for @userName</h3>
-    @* <h4 class="text-left p-4">User entries:</h4> *@
+    <h4 class="text-left p-4">User entries:</h4>
     
     <table class="table">
     <thead>
@@ -41,7 +41,7 @@
     @{
         int entryIndex = 0;
         int timeSum = 0;
-        foreach(EntryModel entry in userEntries) {
+        foreach(EntryModel entry in monthEntries) {
             entryIndex++;
             timeSum += entry.time;
             <tbody>
@@ -67,19 +67,19 @@
 
     <partial name="_CalendarPartial" />
 
-  @Html.ActionLink(
-  "Previous day", 
-  "Index",                         // controller action
-  "Home",        // controller
-  new { dateString = @dateTime.AddDays(-1).ToString("yyyy-MM-dd") },         // action parameters aka route values
-  new { @class = "btn btn-primary btn-lg active" })
+    @Html.ActionLink(
+    "Previous day",
+    "Index",
+    "Home",
+    new { userName = @userName, dateString = @dateTime.AddDays(-1).ToString("yyyy-MM-dd") }, 
+    new { @class = "btn btn-primary btn-lg active" })
 
-@Html.ActionLink(
-  "Next day", 
-  "Index",                         // controller action
-  "Home",        // controller
-  new { dateString = @dateTime.AddDays(1).ToString("yyyy-MM-dd") },         // action parameters aka route values
-  new { @class = "btn btn-primary btn-lg active" })
+    @Html.ActionLink(
+    "Next day", 
+    "Index",
+    "Home",
+    new { userName = @userName, dateString = @dateTime.AddDays(1).ToString("yyyy-MM-dd") }, 
+    new { @class = "btn btn-primary btn-lg active" })
 
 
 </div>
