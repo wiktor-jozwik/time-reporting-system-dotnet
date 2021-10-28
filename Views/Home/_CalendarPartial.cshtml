@@ -5,12 +5,14 @@
     <div class="col-md-8 ms-auto">
         <form asp-controller="Home" asp-action="Index" method="get">
             <div class="col-12">
-                <div class="col-6">
-                    <input type="text" id="txtDate" name="date" class="form-control" autocomplete="off" />
-                </div>
-                <div class="col-6 mt-3 text-center">
-                    <input type="submit" value="Submit" class="btn btn-primary" />
-                </div>
+                <div class="row">
+                    <div class="col-xs-6 px-4">
+                        <input type="text" id="txtDate" name="dateString" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="col-xs-6">
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </div>  
                 <div class="col-6 mt-3 text-center">
                     <label id="lblDate">@ViewBag.Message</label>
                 </div>

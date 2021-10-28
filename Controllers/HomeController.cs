@@ -1,54 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NtrTrs.Models;
 
-using System;
 using System.Text.Json;
 
 namespace NtrTrs.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index(string name = "kowalski", string date = null)
+        public IActionResult Index(string name = "kowalski", string dateString = null)
         {
             DateTime dateTime;
+            List<EntryModel> userEntries = null;
 
-            if (date != null)
-            {
+            if (dateString == null) {
+                dateTime = DateTime.Now;
+            } else {
                 try {
-                    dateTime = DateTime.ParseExact(date, "dd/MM/yyyy", null);
+                    dateTime = this.getRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
                     return View("Error");
                 }
-            } else {
-                dateTime = DateTime.Now;
             }
-
-            string dateString = dateTime.ToString("yyyy-MM");
-
-            UserModel user;
-            string fileName = $"Data/entries/{name}-{dateString}.json";
-
+            ViewData["DateTime"] = dateTime;
 
             try {
-                ViewData["Date"] = dateTime.ToShortDateString();
-                ViewData["UserName"] = name;
+                UserModel userData = this.fetchDataFromJson(this.getFileNameFromDate(name, dateTime));
+                userEntries = userData.entries.FindAll(e => e.date.Date == dateTime.Date);
 
-                string jsonString = System.IO.File.ReadAllText(fileName);
-                user = JsonSerializer.Deserialize<UserModel>(jsonString);
-            } catch (System.IO.FileNotFoundException) { 
-                return View("FileNotFound");
+            } catch (System.IO.FileNotFoundException) {
+
+            } catch (Exception) {
+                return View("Error");
             }
 
-            ViewData["User"] = user;
+            ViewData["UserEntries"] = userEntries;
 
             return View();
+        }
+
+        private UserModel fetchDataFromJson(string fileName) {
+
+            string jsonString = System.IO.File.ReadAllText(fileName);
+            return JsonSerializer.Deserialize<UserModel>(jsonString);
+        }
+
+        private DateTime getRequestedDateTime(string dateString) {
+            DateTime dateTime =  DateTime.ParseExact(dateString, "yyyy-MM-dd", null);
+            
+            return dateTime;
+        }
+
+        private string getFileNameFromDate(string name, DateTime date) {
+            ViewData["UserName"] = name;
+
+            return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";
         }
 
     }

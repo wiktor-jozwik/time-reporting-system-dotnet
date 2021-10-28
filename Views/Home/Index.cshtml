@@ -1,8 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    string dateString = (string) ViewData["Date"];
+    DateTime dateTime = (DateTime) ViewData["DateTime"];
     string userName = (string) ViewData["UserName"];
-    UserModel user = (UserModel) ViewData["User"];
+    List<EntryModel> userEntries = (List<EntryModel>) ViewData["UserEntries"];
 }
 
 @section scripts{ 
@@ -12,7 +12,7 @@
             $('#txtDate').datepicker({
                 changeMonth: true,
                 changeYear: true,
-                format: "dd/mm/yyyy",
+                format: "yyyy-mm-dd",
                 language: "tr"
             });
         });
@@ -20,8 +20,12 @@
 }
 
 <div class="text-center">
-    <h2 class="display-4">Entries for @userName on @dateString</h2>
-    <h3 class="display-4">User entries:</h1>
+    @{
+        if (userEntries == null || userEntries.Count == 0) {
+            <h3 class="display-4">Entries for @userName on @dateTime.ToShortDateString() does not exists.</h3>
+        } else {
+<h3 class="display-4">Entries for @userName</h3>
+    @* <h4 class="text-left p-4">User entries:</h4> *@
     
     <table class="table">
     <thead>
@@ -36,8 +40,10 @@
     </thead>
     @{
         int entryIndex = 0;
-        foreach(EntryModel entry in user.entries) {
+        int timeSum = 0;
+        foreach(EntryModel entry in userEntries) {
             entryIndex++;
+            timeSum += entry.time;
             <tbody>
                 <tr>
                     <th scope="row">@entryIndex</th>
@@ -49,35 +55,31 @@
                 </tr>
             </tbody>
         }
+    int hours = timeSum / 60;
+    int minutes = timeSum - hours * 60;
+
     }
     </table>
 
-    <h3 class="display-4">User accepted entries:</h1>
-    <table class="table">
-    <thead>
-        <tr>
-        <th scope="col">#</th>
-        <th scope="col">Code</th>
-        <th scope="col">Time</th>
-        </tr>
-    </thead>
-    @{
-        int acceptedIndex = 0;
-
-        foreach(AcceptedEntryModel accepted in user.accepted) {
-            acceptedIndex++;
-            <tbody>
-                <tr>
-                    <th scope="row">@acceptedIndex</th>
-                    <td>@accepted.code</td>
-                    <td>@accepted.time</td>
-                </tr>
-            </tbody>
+    <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s) on {2}", @hours, @minutes, @dateTime.ToShortDateString()))</h4>
         }
     }
-    </table>
-
 
     <partial name="_CalendarPartial" />
+
+  @Html.ActionLink(
+  "Previous day", 
+  "Index",                         // controller action
+  "Home",        // controller
+  new { dateString = @dateTime.AddDays(-1).ToString("yyyy-MM-dd") },         // action parameters aka route values
+  new { @class = "btn btn-primary btn-lg active" })
+
+@Html.ActionLink(
+  "Next day", 
+  "Index",                         // controller action
+  "Home",        // controller
+  new { dateString = @dateTime.AddDays(1).ToString("yyyy-MM-dd") },         // action parameters aka route values
+  new { @class = "btn btn-primary btn-lg active" })
+
 
 </div>
