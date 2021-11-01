@@ -2,84 +2,76 @@
     ViewData["Title"] = "Home Page";
     DateTime dateTime = (DateTime) ViewData["DateTime"];
     string userName = (string) ViewData["UserName"];
-    List<EntryModel> monthEntries = (List<EntryModel>) ViewData["monthEntries"];
 }
+@model IEnumerable<NtrTrs.Models.EntryModel>
 
-@section scripts{ 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#txtDate').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                format: "yyyy-mm-dd",
-                language: "tr"
-            });
-        });
-    </script>
-}
+<div class="container">
+    <a asp-action="Create" class="btn btn-primary active text-left">Create New Entry</a>
 
-<div class="text-center">
-    @{
-        if (monthEntries == null || monthEntries.Count == 0) {
-            <h3 class="display-4">Entries for @userName on @dateTime.ToShortDateString() does not exists.</h3>
-        } else {
-<h3 class="display-4">Entries for @userName</h3>
-    <h4 class="text-left p-4">User entries:</h4>
-    
-    <table class="table">
-    <thead>
-        <tr>
-        <th scope="col">#</th>
-        <th scope="col">Code</th>
-        <th scope="col">Date</th>
-        <th scope="col">Subcode</th>
-        <th scope="col">Time</th>
-        <th scope="col">Description</th>
-        </tr>
-    </thead>
-    @{
-        int entryIndex = 0;
-        int timeSum = 0;
-        foreach(EntryModel entry in monthEntries) {
-            entryIndex++;
-            timeSum += entry.time;
-            <tbody>
-                <tr>
-                    <th scope="row">@entryIndex</th>
-                    <td>@entry.code</td>
-                    <td>@entry.date.ToShortDateString()</td>
-                    <td>@entry.subcode</td>
-                    <td>@entry.time</td>
-                    <td>@entry.description</td>
-                </tr>
-            </tbody>
+    <div class="text-center">
+        @{
+            int entryIndex = 0;
+            int timeSum = 0;
+
+            @if (Model != null && Model.Count() != 0) {
+                <h4 class="display-4">Entries for @userName</h4>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Date)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Subcode)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Time)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Description)</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var entry in Model) {
+                        entryIndex++;
+                        timeSum += entry.Time;
+                        <tbody>
+                            <tr>
+                                <th scope="row">@entryIndex</th>
+                                <td>@Html.DisplayFor(modelItem => entry.Code)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Date)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Subcode)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Time)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Description)</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@entry.Id">Edit</a> |
+                                    <a asp-action="Details" asp-route-id="@entry.Id">Details</a> |
+                                    <a asp-action="Delete" asp-route-id="@entry.Id">Delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+                    int hours = timeSum / 60;
+                    int minutes = timeSum - hours * 60;
+                <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s) on {2}", @hours, @minutes, dateTime.ToString("yyyy-MM")))</h4>
+            } else {
+                <h3 class="display-4">Entries for @userName on @dateTime.ToString("yyyy-MM") does not exists.</h3>
+            }
         }
-    int hours = timeSum / 60;
-    int minutes = timeSum - hours * 60;
 
-    }
-    </table>
+        <div class="d-flex justify-content-between">
+            @Html.ActionLink(
+            "Previous Month",
+            "Index",
+            "Home",
+            new { dateString = @dateTime.AddMonths(-1).ToString("yyyy-MM") }, 
+            new { @class = "btn btn-primary active" })
 
-    <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s) on {2}", @hours, @minutes, @dateTime.ToShortDateString()))</h4>
-        }
-    }
-
-    <partial name="_CalendarPartial" />
-
-    @Html.ActionLink(
-    "Previous day",
-    "Index",
-    "Home",
-    new { userName = @userName, dateString = @dateTime.AddDays(-1).ToString("yyyy-MM-dd") }, 
-    new { @class = "btn btn-primary btn-lg active" })
-
-    @Html.ActionLink(
-    "Next day", 
-    "Index",
-    "Home",
-    new { userName = @userName, dateString = @dateTime.AddDays(1).ToString("yyyy-MM-dd") }, 
-    new { @class = "btn btn-primary btn-lg active" })
-
+            @Html.ActionLink(
+            "Next month", 
+            "Index",
+            "Home",
+            new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") }, 
+            new { @class = "btn btn-primary active" })
+        </div>
+    </div>
 
 </div>

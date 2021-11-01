@@ -1,16 +1,16 @@
 {
-  "users": [
+  "Users": [
     {
-      "name": "kowalski"
+      "Name": "Kowalski"
     },
     {
-      "name": "smith"
+      "Name": "Smith"
     },
     {
-      "name": "musk"
+      "Name": "Musk"
     },
     {
-      "name": "tesla"
+      "Name": "Tesla"
     }
   ]
 }

@@ -50,7 +50,7 @@ namespace NtrTrs
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Login}/{action=Index}");
+                    pattern: "{controller=Login}/{action=Index}/{id?}");
             });
         }
     }

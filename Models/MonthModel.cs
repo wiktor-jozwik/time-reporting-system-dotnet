@@ -5,10 +5,10 @@ namespace NtrTrs.Models
 {
     public class MonthModel
     {
-        public string frozen { get; set; }
+        public string Frozen { get; set; }
 
-        public List<EntryModel> entries { get; set; }
+        public List<EntryModel> Entries { get; set; }
 
-        public List<AcceptedEntryModel> accepted { get; set; }
+        public List<AcceptedEntryModel> Accepted { get; set; }
     }
 }

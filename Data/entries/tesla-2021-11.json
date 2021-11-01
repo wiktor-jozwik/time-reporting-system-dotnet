@@ -1,0 +1,22 @@
+{
+  "Frozen": null,
+  "Entries": [
+    {
+      "Id": 1699037896,
+      "Date": "2021-11-04",
+      "Code": "HC",
+      "Subcode": null,
+      "Time": 60,
+      "Description": null
+    },
+    {
+      "Id": 1456079552,
+      "Date": "2021-11-24",
+      "Code": "AR",
+      "Subcode": null,
+      "Time": 125,
+      "Description": null
+    }
+  ],
+  "Accepted": null
+}

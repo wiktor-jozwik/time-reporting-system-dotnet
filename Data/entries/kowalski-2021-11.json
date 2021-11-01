@@ -1,59 +1,111 @@
 {
-  "frozen": "True",
-
-  "entries": [
+  "Frozen": "True",
+  "Entries": [
     {
-      "date": "2021-11-07",
-      "code": "ARGUS-123",
-      "subcode": "database",
-      "time": 45,
-      "description": "data import"
+      "Id": 1,
+      "Date": "2021-11-07",
+      "Code": "ARGUS-123",
+      "Subcode": "database",
+      "Time": 45,
+      "Description": "data import"
     },
-
     {
-      "date": "2021-11-07",
-      "code": "OTHER",
-      "subcode": "",
-      "time": 120,
-      "description": "picie kawy"
+      "Id": 11437048,
+      "Date": "2021-11-06",
+      "Code": "123",
+      "Subcode": null,
+      "Time": 123,
+      "Description": null
     },
-
     {
-      "date": "2021-11-08",
-      "code": "ARGUS-123",
-      "subcode": "",
-      "time": 45,
-      "description": "kompilacja"
+      "Id": 1797166874,
+      "Date": "2021-11-18",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 15,
+      "Description": null
     },
-
     {
-      "date": "2021-11-08",
-      "code": "OTHER",
-      "subcode": "",
-      "time": 120,
-      "description": "office arrangement"
+      "Id": 1917665337,
+      "Date": "2021-11-18",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 15,
+      "Description": null
     },
-
     {
-      "date": "2021-11-12",
-      "code": "ARGUS-123",
-      "subcode": "other",
-      "time": 45,
-      "description": "project meeting"
+      "Id": 1480360032,
+      "Date": "2021-11-18",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 15,
+      "Description": null
     },
-
     {
-      "date": "2021-11-08",
-      "code": "ARGUS",
-      "subcode": "nudy",
-      "time": 65,
-      "description": "project meeting"
+      "Id": 1011634913,
+      "Date": "2021-11-18",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 15,
+      "Description": null
+    },
+    {
+      "Id": 1832092180,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
+    },
+    {
+      "Id": 1619931439,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
+    },
+    {
+      "Id": 25051952,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
+    },
+    {
+      "Id": 2043942820,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
+    },
+    {
+      "Id": 852576363,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
+    },
+    {
+      "Id": 1830808015,
+      "Date": "2021-11-19",
+      "Code": "My project",
+      "Subcode": null,
+      "Time": 515,
+      "Description": null
     }
   ],
-
-  "accepted": [
-    { "code": "ARGUS-123", "time": 100 },
-
-    { "code": "OTHER", "time": 110 }
+  "Accepted": [
+    {
+      "Code": "ARGUS-123",
+      "Time": 100
+    },
+    {
+      "Code": "OTHER",
+      "Time": 110
+    }
   ]
 }
