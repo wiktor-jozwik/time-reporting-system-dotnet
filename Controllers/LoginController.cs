@@ -20,7 +20,7 @@ namespace NtrTrs.Controllers
         public IActionResult Logged(string userName) {
             FileParser.logUser(userName);
 
-            return Redirect("/Home/Index");
+            return Redirect("/Entry/Index");
         }
     }
 }

@@ -1,20 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Entries page";
     DateTime dateTime = (DateTime) ViewData["DateTime"];
     string userName = (string) ViewData["UserName"];
 }
 @model IEnumerable<NtrTrs.Models.EntryModel>
 
 <div class="container">
-    <a asp-action="Create" class="btn btn-primary active text-left">Create New Entry</a>
 
     <div class="text-center">
         @{
+                <div class="d-flex justify-content-between mb-4">
+                    <a href="@Url.Action("Index", "Entry", new { dateString = @dateTime.AddMonths(-1).ToString("yyyy-MM") })" class="btn">
+                        <i class="fas fa-angle-left arrow"></i>
+                    </a>
+
+                    <a asp-action="Create" class="btn btn-primary active">
+                        Create New Entry
+                    </a>
+
+                    <a href="@Url.Action("Index", "Entry", new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") })" class="btn">
+                        <i class="fas fa-angle-right arrow"></i>
+                    </a>
+                </div>
+
             int entryIndex = 0;
             int timeSum = 0;
 
+
             @if (Model != null && Model.Count() != 0) {
-                <h4 class="display-4">Entries for @userName</h4>
+                <h4 class="display-4">@Html.Raw(String.Format("Entries for {0} on {1}", @userName, dateTime.ToString("yyyy-MM")))</h4>
 
                 <table class="table">
                     <thead>
@@ -41,8 +55,8 @@
                                 <td>@Html.DisplayFor(modelItem => entry.Time)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.Description)</td>
                                 <td>
-                                    <a asp-action="Edit" asp-route-id="@entry.Id">Edit</a> |
-                                    <a asp-action="Details" asp-route-id="@entry.Id">Details</a> |
+                                    <a asp-action="Edit" asp-route-id="@entry.Id">Edit</a> 
+                                    <a asp-action="Details" asp-route-id="@entry.Id">Details</a> 
                                     <a asp-action="Delete" asp-route-id="@entry.Id">Delete</a>
                                 </td>
                             </tr>
@@ -51,27 +65,10 @@
                 </table>
                     int hours = timeSum / 60;
                     int minutes = timeSum - hours * 60;
-                <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s) on {2}", @hours, @minutes, dateTime.ToString("yyyy-MM")))</h4>
+                <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s)", @hours, @minutes))</h4>
             } else {
                 <h3 class="display-4">Entries for @userName on @dateTime.ToString("yyyy-MM") does not exists.</h3>
             }
         }
-
-        <div class="d-flex justify-content-between">
-            @Html.ActionLink(
-            "Previous Month",
-            "Index",
-            "Home",
-            new { dateString = @dateTime.AddMonths(-1).ToString("yyyy-MM") }, 
-            new { @class = "btn btn-primary active" })
-
-            @Html.ActionLink(
-            "Next month", 
-            "Index",
-            "Home",
-            new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") }, 
-            new { @class = "btn btn-primary active" })
-        </div>
     </div>
-
 </div>

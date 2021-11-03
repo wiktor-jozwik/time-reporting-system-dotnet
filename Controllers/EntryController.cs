@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace NtrTrs.Controllers
 {
-    public class HomeController : Controller
+    public class EntryController : Controller
     {
         public IActionResult Index(string dateString = null)
         {
@@ -33,8 +33,6 @@ namespace NtrTrs.Controllers
                 MonthModel monthData = FileParser.readJson<MonthModel>(this.getFileNameFromDate(userName.ToLower(), dateTime));
                 monthEntries = monthData.Entries;
                 monthEntries = monthEntries.OrderBy(x => x.Date).ToList();
-
-                // monthEntries = monthData.entries.FindAll(e => e.date.Date == dateTime.Date);
 
             } catch (System.IO.FileNotFoundException) {
                 monthEntries = null;
@@ -64,9 +62,14 @@ namespace NtrTrs.Controllers
 
                 FileParser.writeJson<MonthModel>(entryModel, filePath);
 
+                ViewBag.ResponseStatus = "SUCCESS";
+
+                ViewBag.SuccessResponse = $"Successfully submitted {entryModel.Time} minutes to {entryModel.Code} project on {entryModel.Date.ToString("yyyy-MM")}";
                 return View();  
             }
-            ViewBag.Error = string.Format("FAILLLL");
+                ViewBag.ResponseStatus = "ERROR";
+
+                ViewBag.SuccessResponse = $"Successfully submitted {entryModel.Time} minutes to {entryModel.Code} project on {entryModel.Date.ToString("yyyy-MM")}";
 
             return View(entryModel);
         }

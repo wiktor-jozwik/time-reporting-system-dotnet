@@ -1,3 +1,7 @@
+@{
+    ViewData["Title"] = "Create entry";
+}
+
 @model NtrTrs.Models.EntryModel
 
 <!DOCTYPE html>
@@ -6,6 +10,22 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
+
+    <script type="text/javascript">
+        function showSubmitMessage() {
+            var div = document.getElementById("entry-submit");
+            console.log("@ViewBag.ResponseStatus")
+            switch("@ViewBag.ResponseStatus") {
+                case("ERROR"):
+                    //div.innerHTML = `<div class="alert alert-success" role="alert">@ViewBag.SuccessResponse</div>`
+                    div.innerHTML = `<div>"@ViewBag.SuccessResponse"</div>`
+                    break;
+                case("SUCCESS"):
+                    div.innerHTML = `<div>NIE DUPA</div>`
+                    break;
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -13,7 +33,7 @@
 <hr />
 <div class="row justify-content-center">
     <div class="col">
-        <form asp-action="Create">
+        <form asp-action="Create" onsubmit="showSubmitMessage(); return false;">
             <div asp-validation-summary="All"></div>  
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -41,11 +61,18 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group d-flex justify-content-between">
-                <a asp-action="Index" class="btn btn-primary">Back to List</a>
+                @* <a asp-action="Index" class="btn btn-primary">Back to List</a> *@
+                <a href="@Url.Action("Index", "Entry")" class="btn">
+                    <i class="fas fa-angle-left arrow"></i>
+                </a>
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
+
         </form>
+    <div id="entry-submit">
     </div>
+</div>
+
 </div>
 </body>
 </html>

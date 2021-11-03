@@ -89,3 +89,6 @@ input.input-validation-error {
 .validation-summary-valid {
   display: none;
 }
+.arrow {
+  font-size: 1.6rem;
+}
