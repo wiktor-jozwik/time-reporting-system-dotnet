@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace NtrTrs.Models
@@ -21,7 +22,9 @@ namespace NtrTrs.Models
 
         [Required(ErrorMessage = "Please enter budget")]  
         public int Budget { get; set; }
-        public string Active { get; set; }
+
+        [DefaultValue(true)]
+        public bool Active { get; set; }
         public List<Subactivity> Subactivities { get; set; }
     }
 }

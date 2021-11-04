@@ -1,260 +1,60 @@
 {
-  "Frozen": "True",
+  "Frozen": true,
   "Entries": [
     {
-      "Id": 1,
-      "Date": "2021-11-07",
-      "Code": "ARGUS-123",
-      "Subcode": "database",
-      "Time": 45,
-      "Description": "data import"
-    },
-    {
       "Id": 11437048,
-      "Date": "2021-11-06",
-      "Code": "123",
+      "Date": "2021-11-12",
+      "Code": "AIR",
       "Subcode": null,
       "Time": 123,
       "Description": null
     },
     {
-      "Id": 1797166874,
-      "Date": "2021-11-18",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 15,
-      "Description": null
-    },
-    {
-      "Id": 1917665337,
-      "Date": "2021-11-18",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 15,
-      "Description": null
-    },
-    {
-      "Id": 1480360032,
-      "Date": "2021-11-18",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 15,
-      "Description": null
-    },
-    {
-      "Id": 1011634913,
-      "Date": "2021-11-18",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 15,
-      "Description": null
-    },
-    {
-      "Id": 1832092180,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 1619931439,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 25051952,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 2043942820,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 852576363,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 1830808015,
-      "Date": "2021-11-19",
-      "Code": "My project",
-      "Subcode": null,
-      "Time": 515,
-      "Description": null
-    },
-    {
-      "Id": 1396321868,
-      "Date": "2021-11-11",
+      "Id": 2116262045,
+      "Date": "2021-11-10",
       "Code": "HC",
       "Subcode": null,
-      "Time": 11,
+      "Time": 14,
       "Description": null
     },
     {
-      "Id": 328985296,
-      "Date": "2021-11-01",
+      "Id": 1206261227,
+      "Date": "2021-11-13",
       "Code": "HC",
       "Subcode": null,
-      "Time": 11,
+      "Time": 22,
       "Description": null
     },
     {
-      "Id": 1638679722,
-      "Date": "2021-11-01",
+      "Id": 1864754395,
+      "Date": "2021-11-13",
       "Code": "HC",
       "Subcode": null,
-      "Time": 11,
-      "Description": null
+      "Time": 1111,
+      "Description": "amsda,sdsa,kdalksdas"
     },
     {
-      "Id": 896952777,
-      "Date": "2021-11-01",
+      "Id": 1658958118,
+      "Date": "2021-11-16",
       "Code": "HC",
       "Subcode": null,
-      "Time": 11,
+      "Time": 22,
       "Description": null
     },
     {
-      "Id": 764375740,
-      "Date": "2021-11-12",
-      "Code": "123",
+      "Id": 2118071049,
+      "Date": "2021-11-16",
+      "Code": "HC",
       "Subcode": null,
-      "Time": 123,
+      "Time": 22,
       "Description": null
     },
     {
-      "Id": 371664554,
-      "Date": "2021-11-12",
-      "Code": "123",
+      "Id": 730504147,
+      "Date": "2021-11-19",
+      "Code": "HC",
       "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1032639628,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 274696456,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1195691266,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1802845278,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 725965211,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 173513384,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 431676355,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 530636237,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 311166426,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1005713168,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 743455269,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1071280870,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 1528012298,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
-      "Description": null
-    },
-    {
-      "Id": 248415782,
-      "Date": "2021-11-12",
-      "Code": "123",
-      "Subcode": null,
-      "Time": 123,
+      "Time": 25,
       "Description": null
     }
   ],

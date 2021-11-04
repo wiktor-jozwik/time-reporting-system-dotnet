@@ -18,21 +18,21 @@ namespace NtrTrs.Controllers
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = this.getRequestedDateTime(dateString);
+                    dateTime = EntryService.getRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
-                    return View("Error");
+                    return View("BadRequest");
                 }
             }
             string userName = FileParser.getLoggedUser();
 
-            ViewData["DateTime"] = dateTime;
-            ViewData["UserName"] = userName;
-
-            string filePath = this.getFileNameFromDate(userName.ToLower(), dateTime);
+            string filePath = EntryService.getFileNameFromDate(userName.ToLower(), dateTime);
             try {
-                monthEntries = this.getMonthEntries(filePath);
-                monthEntries = monthEntries.OrderBy(x => x.Date).ToList();
+                MonthModel monthData = EntryService.getMonthData(filePath);
+                monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
+                ViewData["Frozen"] = monthData.Frozen;
+                ViewData["DateTime"] = dateTime;
+                ViewData["UserName"] = userName;
 
             } catch (System.IO.FileNotFoundException) {
                 monthEntries = null;
@@ -47,10 +47,12 @@ namespace NtrTrs.Controllers
         public IActionResult Details(int Id, DateTime Date)
         {
             string userName = FileParser.getLoggedUser();
-            string filePath = getFileNameFromDate(userName, Date);
+            string filePath = EntryService.getFileNameFromDate(userName, Date);
             try {
-                EntryModel entryModel = this.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+                EntryModel entryModel = EntryService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
                 return View(entryModel);
+            } catch (System.IO.FileNotFoundException) {
+                return View("BadRequest");
             } catch (Exception) {
                 return View("Error");
             }
@@ -69,19 +71,29 @@ namespace NtrTrs.Controllers
         {
             this.addActivitiesToView();
 
-            if (ModelState.IsValid)  {  
+            if (ModelState.IsValid)  {
+
                 string userName = FileParser.getLoggedUser();
 
-                string filePath = getFileNameFromDate(userName, entryModel.Date);
+                string filePath = EntryService.getFileNameFromDate(userName, entryModel.Date);
+
+                MonthModel monthData = EntryService.getMonthData(filePath);
+                bool frozen = monthData.Frozen;
+                if(frozen) {
+                    return View("BadRequest");
+                }
 
                 entryModel.Id = new Random().Next();
 
                 FileParser.writeEntry(entryModel, filePath);
 
+
+                this.addActivitiesToView();
+                ViewData["Frozen"] = frozen;
                 ViewData["DateTime"] = entryModel.Date;
                 ViewData["UserName"] = userName;
 
-                return View("Index", this.getMonthEntries(filePath));  
+                return View("Index", EntryService.getMonthEntries(filePath));  
             }
 
             return View(entryModel);
@@ -91,15 +103,20 @@ namespace NtrTrs.Controllers
         public IActionResult Edit(DateTime Date, int Id)
         {
             string userName = FileParser.getLoggedUser();
-            string filePath = getFileNameFromDate(userName, Date);
+            string filePath = EntryService.getFileNameFromDate(userName, Date);
 
             try {
-                EntryModel entryModel = this.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+                MonthModel monthData = EntryService.getMonthData(filePath);
+                EntryModel entryModel = monthData.Entries.FirstOrDefault(x => x.Id == Id);
 
                 this.addActivitiesToView();
+                ViewData["Frozen"] = monthData.Frozen;
 
                 return View(entryModel);
-            } catch (Exception) {
+            } catch (System.IO.FileNotFoundException) {
+                return View("BadRequest");
+            } 
+            catch (Exception) {
                 return View("Error");
             }
         }
@@ -108,14 +125,21 @@ namespace NtrTrs.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int Id, [Bind("Id,Date,Code,Subcode,Time,Description")] EntryModel entryModel)
         {
+            this.addActivitiesToView();
+            ViewData["DateTime"] = entryModel.Date;
+
             if (ModelState.IsValid)  {  
                 string userName = FileParser.getLoggedUser();
 
-                string filePath = getFileNameFromDate(userName, entryModel.Date);
+                string filePath = EntryService.getFileNameFromDate(userName, entryModel.Date);
 
                 try {
                     List<EntryModel> monthEntries = null;
-                    MonthModel monthData = this.getMonthData(filePath);
+                    MonthModel monthData = EntryService.getMonthData(filePath);
+                    bool frozen = monthData.Frozen;
+                    if(frozen) {
+                        return View("BadRequest");
+                    }
                     monthEntries = monthData.Entries;
 
                     int index = monthEntries.FindIndex(x => x.Id == Id);
@@ -123,30 +147,36 @@ namespace NtrTrs.Controllers
 
                     FileParser.writeMonth(monthData, filePath);
 
-                    ViewData["DateTime"] = entryModel.Date;
                     ViewData["UserName"] = userName;
-                    this.addActivitiesToView();
+                    ViewData["Frozen"] = frozen;
                     return View("Index", monthEntries);
+                } catch (System.IO.FileNotFoundException) {
+                    return View("BadRequest");
                 } catch(Exception) {
                     return View("Error");
                 }
 
-            } else {
-                return View("Error");
             }
+            return View(entryModel);
         }
 
         public IActionResult Delete(DateTime Date, int Id)
         {
             string userName = FileParser.getLoggedUser();
-            string filePath = getFileNameFromDate(userName, Date);
+            string filePath = EntryService.getFileNameFromDate(userName, Date);
 
+            EntryModel entryModel = null;
             try {
-                EntryModel entryModel = this.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
-                return View(entryModel);
+                entryModel = EntryService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+            } catch (System.IO.FileNotFoundException) {
+                return View("BadRequest");
             } catch (Exception) {
                 return View("Error");
             }
+            if (entryModel == null) {
+                return View("BadRequest");
+            }
+            return View(entryModel);
 
         }
 
@@ -156,11 +186,16 @@ namespace NtrTrs.Controllers
         {
             string userName = FileParser.getLoggedUser();
 
-            string filePath = getFileNameFromDate(userName, Date);
+            string filePath = EntryService.getFileNameFromDate(userName, Date);
 
             try {
                 List<EntryModel> monthEntries = null;
-                MonthModel monthData = this.getMonthData(filePath);
+                MonthModel monthData = EntryService.getMonthData(filePath);
+                bool frozen = monthData.Frozen;
+                if(frozen) {
+                    return View("BadRequest");
+                }
+
                 monthEntries = monthData.Entries;
                 monthEntries.RemoveAll(x => x.Id == Id);
 
@@ -169,35 +204,23 @@ namespace NtrTrs.Controllers
 
                 ViewData["DateTime"] = Date;
                 ViewData["UserName"] = userName;
-                return View("~/Views/Entry/Index.cshtml", monthEntries); 
-            } catch (Exception) {
+                ViewData["Frozen"] = frozen;
+
+                return View("Index", monthEntries); 
+            } catch (System.IO.FileNotFoundException) {
+                return View("BadRequest");
+            } 
+            catch (Exception) {
                 return View("Error");
             }
 
         }
 
-
-        private DateTime getRequestedDateTime(string dateString) {
-            DateTime dateTime =  DateTime.ParseExact(dateString, "yyyy-MM", null);
-            
-            return dateTime;
-        }
-
-        private string getFileNameFromDate(string name, DateTime date) {
-            return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";
-        }
-
-        private MonthModel getMonthData(string filePath) {
-            return FileParser.readJson<MonthModel>(filePath);
-        }
-        private List<EntryModel> getMonthEntries(string filePath) {
-            MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
-            return monthData.Entries;
-        }
-
         private void addActivitiesToView() {
-            AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+            AcitvityList activityList = FileParser.readJson<AcitvityList>("Data/activity.json");
+            List<ActivityModel> activities = activityList.Activities.Where(a => a.Active == true).ToList();
             ViewData["Activities"] = activities;
         }
+
     }
 }

@@ -5,7 +5,7 @@
       "Code": "HC",
       "Manager": "kowalski",
       "Budget": 1155,
-      "Active": "True",
+      "Active": true,
       "Subactivities": [
         {
           "Code": "DB"
@@ -23,7 +23,7 @@
       "Code": "AIR",
       "Manager": "tesla",
       "Budget": 20000,
-      "Active": "True",
+      "Active": true,
       "Subactivities": [
         {
           "Code": "DB"
@@ -36,6 +36,18 @@
         },
         {
           "Code": "OTHER"
+        }
+      ]
+    },
+    {
+      "Id": 748711376,
+      "Code": "POK",
+      "Manager": "kowalski",
+      "Budget": 3500,
+      "Active": false,
+      "Subactivities": [
+        {
+          "Code": "DB"
         }
       ]
     }

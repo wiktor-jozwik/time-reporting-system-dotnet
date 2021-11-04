@@ -41,7 +41,7 @@
                                 <td>@Html.DisplayFor(modelItem => activity.Code)</td>
                                 <td>@Html.DisplayFor(modelItem => activity.Manager)</td>
                                 <td>@Html.DisplayFor(modelItem => activity.Budget)</td>
-                                <td>@Html.DisplayFor(modelItem => activity.Active)</td>
+                                <td>@Helpers.ToFriendlyString(activity.Active)</td>
                                 @if(activity.Subactivities != null) {
                                     <td>
                                         @foreach (var subactivity in activity.Subactivities)

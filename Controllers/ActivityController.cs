@@ -46,7 +46,7 @@ namespace NtrTrs.Controllers
 
 
             activityModel.Manager = userName;
-            activityModel.Active = "True";
+            activityModel.Active = true;
             activityModel.Id = new Random().Next();
 
             FileParser.writeActivity(activityModel);

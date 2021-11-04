@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace NtrTrs.Models
 {
     public class MonthModel
     {
-        public string Frozen { get; set; }
+        [DefaultValue(false)]
+        public bool Frozen { get; set; }
 
         public List<EntryModel> Entries { get; set; }
 
