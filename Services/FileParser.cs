@@ -52,6 +52,21 @@ public static class FileParser
         System.IO.File.WriteAllText(filePath, jsonData);
     }
 
+    public static void writeActivity(ActivityModel data) {
+        string filePath = "Data/activity.json";
+
+        AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+
+        if (activities.Activities != null) {
+            activities.Activities.Add(data);
+        } else {
+            activities.Activities = new List<ActivityModel>{data};
+        }
+        
+        string jsonData = JsonConvert.SerializeObject(activities, Formatting.Indented);
+        System.IO.File.WriteAllText(filePath, jsonData);
+    }
+
 
     public static void logUser(string userName) {
             using (StreamWriter outputFile = new StreamWriter(LOGGED_USER_FILE_PATH)) {

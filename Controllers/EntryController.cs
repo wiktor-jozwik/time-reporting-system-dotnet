@@ -78,14 +78,11 @@ namespace NtrTrs.Controllers
 
                 FileParser.writeEntry(entryModel, filePath);
 
-                // ViewBag.ResponseStatus = "SUCCESS";
+                ViewData["DateTime"] = entryModel.Date;
+                ViewData["UserName"] = userName;
 
-                // ViewBag.SuccessResponse = $"Successfully submitted {entryModel.Time} minutes to {entryModel.Code} project on {entryModel.Date.ToString("yyyy-MM")}";
-                return View();  
+                return View("Index", this.getMonthEntries(filePath));  
             }
-                // ViewBag.ResponseStatus = "ERROR";
-
-                // ViewBag.SuccessResponse = $"Successfully submitted {entryModel.Time} minutes to {entryModel.Code} project on {entryModel.Date.ToString("yyyy-MM")}";
 
             return View(entryModel);
         }
@@ -129,7 +126,7 @@ namespace NtrTrs.Controllers
                     ViewData["DateTime"] = entryModel.Date;
                     ViewData["UserName"] = userName;
                     this.addActivitiesToView();
-                    return View("~/Views/Entry/Index.cshtml", monthEntries);
+                    return View("Index", monthEntries);
                 } catch(Exception) {
                     return View("Error");
                 }

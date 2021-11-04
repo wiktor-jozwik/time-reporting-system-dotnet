@@ -10,8 +10,10 @@
             int index = 0;
             int maxSubactivities = 0;
             foreach (ActivityModel activity in Model) {
-                if (activity.Subactivities.Count > maxSubactivities) {
-                    maxSubactivities = activity.Subactivities.Count;
+                if (activity.Subactivities != null) {
+                    if (activity.Subactivities.Count > maxSubactivities) {
+                        maxSubactivities = activity.Subactivities.Count;
+                    }
                 }
             }
 
@@ -40,12 +42,14 @@
                                 <td>@Html.DisplayFor(modelItem => activity.Manager)</td>
                                 <td>@Html.DisplayFor(modelItem => activity.Budget)</td>
                                 <td>@Html.DisplayFor(modelItem => activity.Active)</td>
-                                <td>
-                                    @foreach (var subactivity in activity.Subactivities)
-                                    {
-                                        <td>@Html.DisplayFor(modelItem => subactivity.Code)</td>
-                                    }
-                                </td>
+                                @if(activity.Subactivities != null) {
+                                    <td>
+                                        @foreach (var subactivity in activity.Subactivities)
+                                        {
+                                            <td>@Html.DisplayFor(modelItem => subactivity.Code)</td>
+                                        }
+                                    </td>
+                                }
                             </tr>
                         </tbody>
                     }

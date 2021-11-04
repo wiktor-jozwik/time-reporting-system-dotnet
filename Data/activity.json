@@ -1,22 +1,43 @@
 {
   "Activities": [
     {
-      "Id": 1,
-      "Code": "ARGUS-123",
-      "Manager": "nowak",
-      "Name": "Argus",
-      "Budget": 125,
+      "Id": 19981480,
+      "Code": "HC",
+      "Manager": "kowalski",
+      "Budget": 1155,
       "Active": "True",
-      "Subactivities": [{ "Code": "database" }, { "Code": "other" }]
+      "Subactivities": [
+        {
+          "Code": "DB"
+        },
+        {
+          "Code": "OTHER"
+        },
+        {
+          "Code": "TEST"
+        }
+      ]
     },
     {
-      "Id": 2,
-      "Code": "OTHER",
-      "Manager": "smith",
-      "Name": "Other",
-      "Budget": -1,
+      "Id": 786007140,
+      "Code": "AIR",
+      "Manager": "tesla",
+      "Budget": 20000,
       "Active": "True",
-      "Subactivities": [{ "Code": "database" }]
+      "Subactivities": [
+        {
+          "Code": "DB"
+        },
+        {
+          "Code": "ROR"
+        },
+        {
+          "Code": "REACT"
+        },
+        {
+          "Code": "OTHER"
+        }
+      ]
     }
   ]
 }
