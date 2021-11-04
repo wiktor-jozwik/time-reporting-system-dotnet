@@ -8,8 +8,7 @@ namespace NtrTrs.Models
         public int Id { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy/MM/dd}")]
-
+        [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]
         [Required(ErrorMessage = "Please enter date")]  
         public DateTime Date { get; set; }
 

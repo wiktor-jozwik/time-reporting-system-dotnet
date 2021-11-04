@@ -22,7 +22,6 @@ public static class FileParser
     public static dynamic writeJson<T>(object model, string filePath){
 
     if (typeof(T) == typeof(MonthModel) && (model.GetType() == typeof(EntryModel))) {
-
         if (!File.Exists(filePath)) {
             using (FileStream fs = File.Create(filePath)){};
         }
@@ -44,7 +43,15 @@ public static class FileParser
         System.IO.File.WriteAllText(filePath, jsonData);
 
         return true;
-    } else {
+    } else if (typeof(T) == typeof(MonthModel) && (model.GetType() == typeof(MonthModel))) {
+        var settings=new JsonSerializerSettings{DateFormatString ="yyyy-MM-dd"};
+
+        string jsonData = JsonConvert.SerializeObject(model, Formatting.Indented, settings);
+        System.IO.File.WriteAllText(filePath, jsonData);
+        return true;
+    } 
+    
+    else {
         return false;
         }
     }
