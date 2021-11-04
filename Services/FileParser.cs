@@ -14,7 +14,10 @@ public static class FileParser
             return System.Text.Json.JsonSerializer.Deserialize<MonthModel>(jsonString);
         } else if (typeof(T) == typeof(UserList)) {
             return System.Text.Json.JsonSerializer.Deserialize<UserList>(jsonString);
-        } else {
+        } else if (typeof(T) == typeof(AcitvityList)) {
+            return System.Text.Json.JsonSerializer.Deserialize<AcitvityList>(jsonString);
+        } 
+        else {
             return false;
         }
     }

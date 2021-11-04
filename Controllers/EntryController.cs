@@ -58,6 +58,8 @@ namespace NtrTrs.Controllers
         
         public IActionResult Create()
             {
+                this.addActivitiesToView();
+
                 return View();
             }
 
@@ -65,6 +67,8 @@ namespace NtrTrs.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,Date,Code,Subcode,Time,Description")] EntryModel entryModel)
         {
+            this.addActivitiesToView();
+
             if (ModelState.IsValid)  {  
                 string userName = FileParser.getLoggedUser();
 
@@ -94,6 +98,9 @@ namespace NtrTrs.Controllers
 
             try {
                 EntryModel entryModel = this.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+
+                this.addActivitiesToView();
+
                 return View(entryModel);
             } catch (Exception) {
                 return View("Error");
@@ -121,6 +128,7 @@ namespace NtrTrs.Controllers
 
                     ViewData["DateTime"] = entryModel.Date;
                     ViewData["UserName"] = userName;
+                    this.addActivitiesToView();
                     return View("~/Views/Entry/Index.cshtml", monthEntries);
                 } catch(Exception) {
                     return View("Error");
@@ -188,6 +196,11 @@ namespace NtrTrs.Controllers
         private List<EntryModel> getMonthEntries(string filePath) {
             MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
             return monthData.Entries;
+        }
+
+        private void addActivitiesToView() {
+            AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+            ViewData["Activities"] = activities;
         }
     }
 }

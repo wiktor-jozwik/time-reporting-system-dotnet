@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Create entry";
+    AcitvityList activities = (AcitvityList) ViewData["Activities"];
 }
 
 @model NtrTrs.Models.EntryModel
@@ -25,7 +26,14 @@
             </div>
             <div class="form-group">
                 <label asp-for="Code" class="control-label"></label>
-                <input asp-for="Code" class="form-control" />
+                <select name="Code" class="custom-select">
+                    @{
+                        foreach(ActivityModel activity in activities.Activities) {
+                            <option>@activity.Code</option>
+                        }
+                    }
+                </select> 
+
                 <span asp-validation-for="Code" class="text-danger"></span>
             </div>
             <div class="form-group">

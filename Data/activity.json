@@ -1,0 +1,22 @@
+{
+  "Activities": [
+    {
+      "Id": 1,
+      "Code": "ARGUS-123",
+      "Manager": "nowak",
+      "Name": "Argus",
+      "Budget": 125,
+      "Active": "True",
+      "Subactivities": [{ "Code": "database" }, { "Code": "other" }]
+    },
+    {
+      "Id": 2,
+      "Code": "OTHER",
+      "Manager": "smith",
+      "Name": "Other",
+      "Budget": -1,
+      "Active": "True",
+      "Subactivities": [{ "Code": "database" }]
+    }
+  ]
+}
