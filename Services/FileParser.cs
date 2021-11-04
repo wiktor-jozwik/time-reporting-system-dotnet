@@ -19,9 +19,7 @@ public static class FileParser
         }
     }
 
-    public static dynamic writeJson<T>(object model, string filePath){
-
-    if (typeof(T) == typeof(MonthModel) && (model.GetType() == typeof(EntryModel))) {
+    public static void writeEntry(EntryModel data, string filePath) {
         if (!File.Exists(filePath)) {
             using (FileStream fs = File.Create(filePath)){};
         }
@@ -31,9 +29,9 @@ public static class FileParser
                             ?? new MonthModel();
 
         if (monthEntries.Entries != null) {
-            monthEntries.Entries.Add((EntryModel) model);
+            monthEntries.Entries.Add((EntryModel) data);
         } else {
-            monthEntries.Entries = new List<EntryModel>{(EntryModel) model};
+            monthEntries.Entries = new List<EntryModel>{(EntryModel) data};
         }
 
         var responseData = monthEntries;
@@ -42,19 +40,15 @@ public static class FileParser
         string jsonData = JsonConvert.SerializeObject(responseData, Formatting.Indented, settings);
         System.IO.File.WriteAllText(filePath, jsonData);
 
-        return true;
-    } else if (typeof(T) == typeof(MonthModel) && (model.GetType() == typeof(MonthModel))) {
+    }
+
+    public static void writeMonth(MonthModel data, string filePath) {
         var settings=new JsonSerializerSettings{DateFormatString ="yyyy-MM-dd"};
 
-        string jsonData = JsonConvert.SerializeObject(model, Formatting.Indented, settings);
+        string jsonData = JsonConvert.SerializeObject(data, Formatting.Indented, settings);
         System.IO.File.WriteAllText(filePath, jsonData);
-        return true;
-    } 
-    
-    else {
-        return false;
-        }
     }
+
 
     public static void logUser(string userName) {
             using (StreamWriter outputFile = new StreamWriter(LOGGED_USER_FILE_PATH)) {

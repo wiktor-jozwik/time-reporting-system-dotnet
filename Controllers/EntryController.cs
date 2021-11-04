@@ -65,7 +65,6 @@ namespace NtrTrs.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,Date,Code,Subcode,Time,Description")] EntryModel entryModel)
         {
-            System.Console.WriteLine(entryModel.Date);
             if (ModelState.IsValid)  {  
                 string userName = FileParser.getLoggedUser();
 
@@ -73,7 +72,7 @@ namespace NtrTrs.Controllers
 
                 entryModel.Id = new Random().Next();
 
-                FileParser.writeJson<MonthModel>(entryModel, filePath);
+                FileParser.writeEntry(entryModel, filePath);
 
                 // ViewBag.ResponseStatus = "SUCCESS";
 
@@ -112,14 +111,13 @@ namespace NtrTrs.Controllers
 
                 try {
                     List<EntryModel> monthEntries = null;
-                    MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
+                    MonthModel monthData = this.getMonthData(filePath);
                     monthEntries = monthData.Entries;
 
                     int index = monthEntries.FindIndex(x => x.Id == Id);
                     monthEntries[index] = entryModel;
 
-                    FileParser.writeJson<MonthModel>(monthData, filePath);
-
+                    FileParser.writeMonth(monthData, filePath);
 
                     ViewData["DateTime"] = entryModel.Date;
                     ViewData["UserName"] = userName;
@@ -132,7 +130,6 @@ namespace NtrTrs.Controllers
                 return View("Error");
             }
         }
-
 
         public IActionResult Delete(DateTime Date, int Id)
         {
@@ -158,11 +155,11 @@ namespace NtrTrs.Controllers
 
             try {
                 List<EntryModel> monthEntries = null;
-                MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
+                MonthModel monthData = this.getMonthData(filePath);
                 monthEntries = monthData.Entries;
                 monthEntries.RemoveAll(x => x.Id == Id);
 
-                FileParser.writeJson<MonthModel>(monthData, filePath);
+                FileParser.writeMonth(monthData, filePath);
 
 
                 ViewData["DateTime"] = Date;
@@ -185,6 +182,9 @@ namespace NtrTrs.Controllers
             return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";
         }
 
+        private MonthModel getMonthData(string filePath) {
+            return FileParser.readJson<MonthModel>(filePath);
+        }
         private List<EntryModel> getMonthEntries(string filePath) {
             MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
             return monthData.Entries;
