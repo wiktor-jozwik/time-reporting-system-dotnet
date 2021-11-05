@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Edit entry";
-    ActivityList activities = (ActivityList) ViewData["Activities"];
+    List<ActivityModel> activities = (List<ActivityModel>) ViewData["Activities"];
 }
 
 @model NtrTrs.Models.EntryModel
@@ -33,7 +33,7 @@
                 <label asp-for="Code" class="control-label"></label>
                 <select name="Code" class="custom-select">
                     @{
-                        foreach(ActivityModel activity in activities.Activities) {
+                        foreach(ActivityModel activity in activities) {
                             <option>@activity.Code</option>
                         }
                     }

@@ -93,7 +93,6 @@ namespace NtrTrs.Controllers
                 FileParser.writeEntry(entryModel, filePath);
 
 
-                this.addActivitiesToView();
                 ViewData["DateTime"] = entryModel.Date;
                 ViewData["UserName"] = userName;
 
@@ -166,6 +165,8 @@ namespace NtrTrs.Controllers
 
         public IActionResult Delete(DateTime Date, int Id)
         {
+            this.addActivitiesToView();
+
             string userName = FileParser.getLoggedUser();
             string filePath = EntryService.getFileNameFromDate(userName, Date);
 

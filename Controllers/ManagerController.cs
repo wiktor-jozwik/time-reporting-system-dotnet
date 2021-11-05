@@ -28,7 +28,7 @@ namespace NtrTrs.Controllers
             List<EntryModel> allEntries = this.getEntriesFromAllMonths(allMonthsData);
 
 
-            allEntries = allEntries.Where(e => e.Code == Code).ToList();
+            allEntries = allEntries.Where(e => e.Code == Code).OrderBy(e => e.Date).ToList();
 
             ActivityModel activity = this.getActivityByCode(Code);
             ViewData["Budget"] = activity.Budget;
@@ -63,42 +63,42 @@ namespace NtrTrs.Controllers
 
             return View("Index");
         }
-    private bool validateIfUserIsManager(string code, string userName) {
-        ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
+        private bool validateIfUserIsManager(string code, string userName) {
+            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
 
-        return activities.Activities.Where(a => a.Code == code).FirstOrDefault().Manager.ToLower() == userName.ToLower();
+            return activities.Activities.Where(a => a.Code == code).FirstOrDefault().Manager.ToLower() == userName.ToLower();
         }
 
-    private List<MonthModel> readAllMonthsAllUsersData() {
-        List<MonthModel> allMonthsData = new List<MonthModel>();
-        string[] filePaths = 
-        Directory.GetFiles("Data/entries", "*.json");
+        private List<MonthModel> readAllMonthsAllUsersData() {
+            List<MonthModel> allMonthsData = new List<MonthModel>();
+            string[] filePaths = 
+            Directory.GetFiles("Data/entries", "*.json");
 
-        foreach (var filePath in filePaths) {
-            MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
-            allMonthsData.Add(monthData);
+            foreach (var filePath in filePaths) {
+                MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
+                allMonthsData.Add(monthData);
+            }
+
+            return allMonthsData;
         }
 
-        return allMonthsData;
-    }
+        private List<EntryModel> getEntriesFromAllMonths(List<MonthModel> allMonthsData) {
+            List<EntryModel> allEntries = new List<EntryModel>();
 
-    private List<EntryModel> getEntriesFromAllMonths(List<MonthModel> allMonthsData) {
-        List<EntryModel> allEntries = new List<EntryModel>();
+            foreach(var month in allMonthsData) {
+                allEntries.AddRange(month.Entries);
+            }
 
-        foreach(var month in allMonthsData) {
-            allEntries.AddRange(month.Entries);
+            return allEntries;
         }
 
-        return allEntries;
-    }
-
-    private ActivityModel getActivityByCode(string code) {
-        ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-        return activityList.Activities.FirstOrDefault(a => a.Code == code);
-    }
-    private List<ActivityModel> getManagerActivities(string name) {
-        ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-        return activityList.Activities.Where(a => a.Manager.ToLower() == name.ToLower()).ToList();
-    }
+        private ActivityModel getActivityByCode(string code) {
+            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+            return activityList.Activities.FirstOrDefault(a => a.Code == code);
+        }
+        private List<ActivityModel> getManagerActivities(string name) {
+            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+            return activityList.Activities.Where(a => a.Manager.ToLower() == name.ToLower()).ToList();
+        }
     }
 }
