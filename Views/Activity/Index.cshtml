@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Activities page";
+}
+@model IEnumerable<NtrTrs.Models.ActivityModel>
+
+<div class="container">
+
+    <div class="text-center">
+        @{
+            int index = 0;
+            int maxSubactivities = 0;
+            foreach (ActivityModel activity in Model) {
+                if (activity.Subactivities != null) {
+                    if (activity.Subactivities.Count > maxSubactivities) {
+                        maxSubactivities = activity.Subactivities.Count;
+                    }
+                }
+            }
+
+            @if (Model != null && Model.Count() != 0) {
+                maxSubactivities++;
+                <h4 class="display-4">All activities</h4>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Manager)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Budget)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Active)</th>
+                        <th colspan="@maxSubactivities" scope="row">@Html.DisplayNameFor(model => model.Subactivities)</th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var activity in Model) {
+                        index++;
+                        <tbody>
+                            <tr>
+                                <th scope="row">@index</th>
+                                <td>@Html.DisplayFor(modelItem => activity.Code)</td>
+                                <td>@Html.DisplayFor(modelItem => activity.Manager)</td>
+                                <td>@Html.DisplayFor(modelItem => activity.Budget)</td>
+                                <td>@Helpers.ToFriendlyString(activity.Active)</td>
+                                @if(activity.Subactivities != null) {
+                                    <td>
+                                        @foreach (var subactivity in activity.Subactivities)
+                                        {
+                                            <td>@Html.DisplayFor(modelItem => subactivity.Code)</td>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            }
+        }
+
+        <a asp-action="Create" class="btn btn-primary active">
+            Create New Activity
+        </a>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Monthly Raport page";
+    DateTime dateTime = (DateTime) ViewData["DateTime"];
+    string userName = (string) ViewData["UserName"];
+    bool isFrozenMonth = false;
+    @if(ViewData["Frozen"] != null) {
+        isFrozenMonth = (bool) ViewData["Frozen"];
+    }
+}
+@model IEnumerable<NtrTrs.Models.ReportViewModel>
+
+<div class="container">
+
+    <div class="text-center">
+        @{
+        <div class="d-flex justify-content-between mb-4">
+            <a href="@Url.Action("Index", "Report", new { dateString = @dateTime.AddMonths(-1).ToString("yyyy-MM") })" class="btn">
+                <i class="fas fa-angle-left arrow"></i>
+            </a>
+
+            <a href="@Url.Action("Index", "Report", new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") })" class="btn">
+                <i class="fas fa-angle-right arrow"></i>
+            </a>
+        </div>
+        }
+
+        @if (Model != null && Model.Count() != 0) {
+                <h4 class="display-4">@Html.Raw(String.Format("Monthly report for {0} in {1}", @userName, dateTime.ToString("yyyy-MM")))</h4>
+                int index = 0;
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.TotalTime)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.AcceptedTime)</th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var entry in Model) {
+                        index++;
+                        <tbody>
+                            <tr>
+                                <th scope="row">@index</th>
+                                <td>@Html.DisplayFor(modelItem => entry.Code)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.TotalTime)</td>
+                                @if (entry.AcceptedTime == 0) {
+                                    <td>-</td>
+                                } else {
+                                    <td>@Html.DisplayFor(modelItem => entry.AcceptedTime)</td>
+                                }
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+
+                @if(!isFrozenMonth) {
+                    @Html.ActionLink("Submit month", "Submit", "Report", new { Date = @dateTime }, new { @class = "btn btn-primary" })
+                }
+
+        } else {
+                <h3 class="display-4">Entries for @userName on @dateTime.ToString("yyyy-MM") does not exists.</h3>
+            }
+    </div>
+</div>

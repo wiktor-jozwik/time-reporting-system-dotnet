@@ -1,0 +1,60 @@
+@model NtrTrs.Models.EntryModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+
+<h4>Entry</h4>
+<div class="container">
+
+  <div class="text-center">
+      <table class="table">
+          <thead>
+              <tr>
+              <th scope="col">Key</th>
+              <th scope="col">Value</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Date)</td>
+                  <td>@Html.DisplayFor(model => model.Date)</td>
+              </tr>
+
+                <tr>
+                  <td>@Html.DisplayNameFor(model => model.Code)</td>
+                  <td>@Html.DisplayFor(model => model.Code)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Subcode)</td>
+                  <td>@Html.DisplayFor(model => model.Subcode)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Time)</td>
+                  <td>@Html.DisplayFor(model => model.Time)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Description)</td>
+                  <td>@Html.DisplayFor(model => model.Description)</td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+
+  <div class="form-group d-flex justify-content-between mt-2">
+        <a href="@Url.Action("Index", "Entry", new { dateString = @Model.Date.ToString("yyyy-MM") })" class="btn">
+            <i class="fas fa-angle-left arrow"></i>
+        </a>
+    <a asp-action="Edit" class="btn btn-primary" asp-route-date="@Model.Date.ToString("MM/dd/yyyy")" asp-route-id="@Model.Id">Edit</a> 
+  </div>
+</div>
+</body>
+</html>

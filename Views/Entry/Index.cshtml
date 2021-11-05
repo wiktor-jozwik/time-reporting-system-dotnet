@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Entries page";
+    DateTime dateTime = (DateTime) ViewData["DateTime"];
+    string userName = (string) ViewData["UserName"];
+    bool isFrozenMonth = false;
+    @if(ViewData["Frozen"] != null) {
+        isFrozenMonth = (bool) ViewData["Frozen"];
+    }
+}
+@model IEnumerable<NtrTrs.Models.EntryModel>
+
+<div class="container">
+
+    <div class="text-center">
+        @{
+                <div class="d-flex justify-content-between mb-4">
+                    <a href="@Url.Action("Index", "Entry", new { dateString = @dateTime.AddMonths(-1).ToString("yyyy-MM") })" class="btn">
+                        <i class="fas fa-angle-left arrow"></i>
+                    </a>
+
+                    @if(!isFrozenMonth) {
+                    <a asp-action="Create" class="btn btn-primary active">
+                        Create New Entry
+                    </a>
+                    }
+
+                    <a href="@Url.Action("Index", "Entry", new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") })" class="btn">
+                        <i class="fas fa-angle-right arrow"></i>
+                    </a>
+                </div>
+
+            int entryIndex = 0;
+            int timeSum = 0;
+
+
+            @if (Model != null && Model.Count() != 0) {
+                <h4 class="display-4">@Html.Raw(String.Format("Entries for {0} in {1}", @userName, dateTime.ToString("yyyy-MM")))</h4>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Date)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Subcode)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Time)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Description)</th>
+                        @if(!isFrozenMonth) {
+                            <th scope="col">Action</th>
+                        }
+                        </tr>
+                    </thead>
+
+                    @foreach (var entry in Model) {
+                        entryIndex++;
+                        timeSum += entry.Time;
+                        <tbody>
+                            <tr>
+                                <th scope="row">@entryIndex</th>
+                                <td>@Html.DisplayFor(modelItem => entry.Code)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Date)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Subcode)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Time)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Description)</td>
+                                @if(!isFrozenMonth) {
+                                <td>
+                                    <a asp-action="Edit" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Edit</a> 
+                                    <a asp-action="Details" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Details</a> 
+                                    <a asp-action="Delete" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Delete</a>
+                                </td>                              
+                                }
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+                    int hours = timeSum / 60;
+                    int minutes = timeSum - hours * 60;
+                <h4 class="text-left p-4">@Html.Raw(String.Format("Time of all activities: {0} hour(s) and {1} minute(s)", @hours, @minutes))</h4>
+            } else {
+                <h3 class="display-4">Entries for @userName on @dateTime.ToString("yyyy-MM") does not exists.</h3>
+            }
+        }
+    </div>
+</div>

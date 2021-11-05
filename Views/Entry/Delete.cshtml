@@ -1,0 +1,64 @@
+@model NtrTrs.Models.EntryModel
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+
+<h3>Are you sure you want to delete this?</h3>
+<div class="container">
+  <div class="text-center">
+      <table class="table">
+          <thead>
+              <tr>
+              <th scope="col">Key</th>
+              <th scope="col">Value</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Date)</td>
+                  <td>@Html.DisplayFor(model => model.Date)</td>
+              </tr>
+
+                <tr>
+                  <td>@Html.DisplayNameFor(model => model.Code)</td>
+                  <td>@Html.DisplayFor(model => model.Code)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Subcode)</td>
+                  <td>@Html.DisplayFor(model => model.Subcode)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Time)</td>
+                  <td>@Html.DisplayFor(model => model.Time)</td>
+              </tr>
+
+              <tr>
+                  <td>@Html.DisplayNameFor(model => model.Description)</td>
+                  <td>@Html.DisplayFor(model => model.Description)</td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+    
+    <form asp-action="Delete">
+        <div class="form-group d-flex justify-content-between mt-2">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Date" />
+            <a href="@Url.Action("Index", "Entry", new { dateString = @Model.Date.ToString("yyyy-MM") })" class="btn">
+                <i class="fas fa-angle-left arrow"></i>
+            </a>
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
+</body>
+</html>

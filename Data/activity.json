@@ -1,0 +1,70 @@
+{
+  "Activities": [
+    {
+      "Id": 19981480,
+      "Code": "HC",
+      "Manager": "kowalski",
+      "Budget": 1155,
+      "Active": true,
+      "Subactivities": [
+        {
+          "Code": "DB"
+        },
+        {
+          "Code": "OTHER"
+        },
+        {
+          "Code": "TEST"
+        }
+      ]
+    },
+    {
+      "Id": 786007140,
+      "Code": "AIR",
+      "Manager": "tesla",
+      "Budget": 20000,
+      "Active": true,
+      "Subactivities": [
+        {
+          "Code": "DB"
+        },
+        {
+          "Code": "ROR"
+        },
+        {
+          "Code": "REACT"
+        },
+        {
+          "Code": "OTHER"
+        }
+      ]
+    },
+    {
+      "Id": 748711376,
+      "Code": "POK",
+      "Manager": "kowalski",
+      "Budget": 3500,
+      "Active": false,
+      "Subactivities": [
+        {
+          "Code": "DB"
+        }
+      ]
+    },
+    {
+      "Id": 1920467679,
+      "Code": "SpaceX",
+      "Manager": "musk",
+      "Budget": 10000,
+      "Active": true,
+      "Subactivities": [
+        {
+          "Code": "Tesla"
+        },
+        {
+          "Code": "Paypal"
+        }
+      ]
+    }
+  ]
+}

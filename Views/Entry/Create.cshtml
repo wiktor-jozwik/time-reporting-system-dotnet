@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Create entry";
+    List<ActivityModel> activities = (List<ActivityModel>) ViewData["Activities"];
+}
+
+@model NtrTrs.Models.EntryModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+
+<h4>Entry</h4>
+<div class="row justify-content-center">
+    <div class="col">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control"  />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Code" class="control-label"></label>
+                <select name="Code" class="custom-select">
+                    @{
+                        foreach(ActivityModel activity in activities) {
+                            <option>@activity.Code</option>
+                        }
+                    }
+                </select> 
+
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subcode" class="control-label"></label>
+                <input asp-for="Subcode" class="form-control" />
+                <span asp-validation-for="Subcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Time" class="control-label"></label>
+                <input asp-for="Time" class="form-control" />
+                <span asp-validation-for="Time" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Entry")" class="btn">
+                    <i class="fas fa-angle-left arrow"></i>
+                </a>
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+</div>
+
+</div>
+</body>
+</html>
