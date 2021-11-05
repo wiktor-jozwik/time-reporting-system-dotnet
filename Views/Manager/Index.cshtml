@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Login Page";
+    List<ActivityModel> activities = (List<ActivityModel>) ViewData["Activities"];
+    }
+
+<div class="text-center">
+    <h3 class="display-4">Select Project</h3>
+        <form asp-controller="Manager" asp-action="Entries" method="get">
+            <div class="col-12">
+                <div class="row">
+                    <select name="Code" class="custom-select">
+                    @{
+                        if (activities == null || activities.Count == 0) {
+                            <h3 class="display-4">There are no users in system.</h3>
+                        } else {
+                            foreach(ActivityModel a in activities) {
+                                <option>@a.Code</option>
+                            }
+                        }
+                    }
+                    </select> 
+                    <div class="col-xs-6 mt-3">
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                </div>  
+            </div>
+        </form>
+</div>

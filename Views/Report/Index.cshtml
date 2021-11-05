@@ -2,6 +2,10 @@
     ViewData["Title"] = "Monthly Raport page";
     DateTime dateTime = (DateTime) ViewData["DateTime"];
     string userName = (string) ViewData["UserName"];
+    bool isFrozenMonth = false;
+    @if(ViewData["Frozen"] != null) {
+        isFrozenMonth = (bool) ViewData["Frozen"];
+    }
 }
 @model IEnumerable<NtrTrs.Models.ReportViewModel>
 
@@ -29,6 +33,7 @@
                         <th scope="col">#</th>
                         <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
                         <th scope="col">@Html.DisplayNameFor(model => model.TotalTime)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.AcceptedTime)</th>
                         </tr>
                     </thead>
 
@@ -39,10 +44,20 @@
                                 <th scope="row">@index</th>
                                 <td>@Html.DisplayFor(modelItem => entry.Code)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.TotalTime)</td>
+                                @if (entry.AcceptedTime == 0) {
+                                    <td>-</td>
+                                } else {
+                                    <td>@Html.DisplayFor(modelItem => entry.AcceptedTime)</td>
+                                }
                             </tr>
                         </tbody>
                     }
                 </table>
+
+                @if(!isFrozenMonth) {
+                    @Html.ActionLink("Submit month", "Submit", "Report", new { Date = @dateTime }, new { @class = "btn btn-primary" })
+                }
+
         } else {
                 <h3 class="display-4">Entries for @userName on @dateTime.ToString("yyyy-MM") does not exists.</h3>
             }

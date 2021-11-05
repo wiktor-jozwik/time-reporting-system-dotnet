@@ -18,9 +18,11 @@
                         <i class="fas fa-angle-left arrow"></i>
                     </a>
 
+                    @if(!isFrozenMonth) {
                     <a asp-action="Create" class="btn btn-primary active">
                         Create New Entry
                     </a>
+                    }
 
                     <a href="@Url.Action("Index", "Entry", new { dateString = @dateTime.AddMonths(1).ToString("yyyy-MM") })" class="btn">
                         <i class="fas fa-angle-right arrow"></i>

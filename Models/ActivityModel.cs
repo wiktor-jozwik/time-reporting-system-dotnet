@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace NtrTrs.Models
 {
 
-    public class AcitvityList {
+    public class ActivityList {
         public List<ActivityModel> Activities { get; set;}
     }
     public struct Subactivity {

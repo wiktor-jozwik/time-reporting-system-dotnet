@@ -14,8 +14,8 @@ public static class FileParser
             return System.Text.Json.JsonSerializer.Deserialize<MonthModel>(jsonString);
         } else if (typeof(T) == typeof(UserList)) {
             return System.Text.Json.JsonSerializer.Deserialize<UserList>(jsonString);
-        } else if (typeof(T) == typeof(AcitvityList)) {
-            return System.Text.Json.JsonSerializer.Deserialize<AcitvityList>(jsonString);
+        } else if (typeof(T) == typeof(ActivityList)) {
+            return System.Text.Json.JsonSerializer.Deserialize<ActivityList>(jsonString);
         } 
         else {
             return false;
@@ -55,7 +55,7 @@ public static class FileParser
     public static void writeActivity(ActivityModel data) {
         string filePath = "Data/activity.json";
 
-        AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+        ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
 
         if (activities.Activities != null) {
             activities.Activities.Add(data);

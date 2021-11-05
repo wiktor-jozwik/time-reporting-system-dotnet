@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NtrTrs.Models;
+using System.IO;
 
 using System.Linq;
 
@@ -27,12 +28,14 @@ namespace NtrTrs.Controllers
             string userName = FileParser.getLoggedUser();
 
             string filePath = EntryService.getFileNameFromDate(userName.ToLower(), dateTime);
+            ViewData["DateTime"] = dateTime;
+            ViewData["UserName"] = userName;
+
             try {
                 MonthModel monthData = EntryService.getMonthData(filePath);
                 monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
                 ViewData["Frozen"] = monthData.Frozen;
-                ViewData["DateTime"] = dateTime;
-                ViewData["UserName"] = userName;
+
 
             } catch (System.IO.FileNotFoundException) {
                 monthEntries = null;
@@ -77,19 +80,20 @@ namespace NtrTrs.Controllers
 
                 string filePath = EntryService.getFileNameFromDate(userName, entryModel.Date);
 
-                MonthModel monthData = EntryService.getMonthData(filePath);
-                bool frozen = monthData.Frozen;
-                if(frozen) {
-                    return View("BadRequest");
-                }
+                if (System.IO.File.Exists(filePath)) {
+                    MonthModel monthData = EntryService.getMonthData(filePath);
+                    bool frozen = monthData.Frozen;
 
+                    if(frozen) {
+                        return View("BadRequest");
+                    }
+                } 
                 entryModel.Id = new Random().Next();
 
                 FileParser.writeEntry(entryModel, filePath);
 
 
                 this.addActivitiesToView();
-                ViewData["Frozen"] = frozen;
                 ViewData["DateTime"] = entryModel.Date;
                 ViewData["UserName"] = userName;
 
@@ -213,11 +217,10 @@ namespace NtrTrs.Controllers
             catch (Exception) {
                 return View("Error");
             }
-
         }
 
         private void addActivitiesToView() {
-            AcitvityList activityList = FileParser.readJson<AcitvityList>("Data/activity.json");
+            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
             List<ActivityModel> activities = activityList.Activities.Where(a => a.Active == true).ToList();
             ViewData["Activities"] = activities;
         }

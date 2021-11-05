@@ -11,7 +11,7 @@ namespace NtrTrs.Controllers
     public class ActivityController : Controller
     {
         public IActionResult Index() {            
-            AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
 
             return View(activities.Activities);
         }
@@ -52,13 +52,13 @@ namespace NtrTrs.Controllers
             FileParser.writeActivity(activityModel);
             }
 
-            AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
 
             return View("~/Views/Activity/Index.cshtml", activities.Activities);
         }
 
         private bool checkCodeUniqueness(string code) {
-            AcitvityList activities = FileParser.readJson<AcitvityList>("Data/activity.json");
+            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
 
             return !activities.Activities.Any(act => act.Code == code);
         }

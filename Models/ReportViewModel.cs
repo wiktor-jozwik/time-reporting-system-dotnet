@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace NtrTrs.Models
@@ -8,6 +9,9 @@ namespace NtrTrs.Models
 
         [DisplayName("Total time spent")]
         public int TotalTime { get; set; }
+
+        [DisplayName("Total time accepted")]
+        public int AcceptedTime { get; set; }
 
     }
 }

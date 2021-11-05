@@ -50,6 +50,21 @@
           "Code": "DB"
         }
       ]
+    },
+    {
+      "Id": 1920467679,
+      "Code": "SpaceX",
+      "Manager": "musk",
+      "Budget": 10000,
+      "Active": true,
+      "Subactivities": [
+        {
+          "Code": "Tesla"
+        },
+        {
+          "Code": "Paypal"
+        }
+      ]
     }
   ]
 }
