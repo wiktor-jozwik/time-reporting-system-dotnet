@@ -52,7 +52,14 @@ public static class FileParser
         System.IO.File.WriteAllText(filePath, jsonData);
     }
 
-    public static void writeActivity(ActivityModel data) {
+    public static void writeActivity(ActivityList data) {
+        string filePath = "Data/activity.json";
+
+        string jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);
+        System.IO.File.WriteAllText(filePath, jsonData);
+    }
+
+    public static void appendActivity(ActivityModel data) {
         string filePath = "Data/activity.json";
 
         ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");

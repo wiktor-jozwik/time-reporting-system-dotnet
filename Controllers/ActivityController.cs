@@ -49,7 +49,7 @@ namespace NtrTrs.Controllers
             activityModel.Active = true;
             activityModel.Id = new Random().Next();
 
-            FileParser.writeActivity(activityModel);
+            FileParser.appendActivity(activityModel);
             }
 
             ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");

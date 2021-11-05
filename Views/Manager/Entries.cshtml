@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Manager entries page";
     int budget = (int) ViewData["Budget"];
+    bool isProjectActive = (bool) ViewData["Active"];
 }
 @model IEnumerable<NtrTrs.Models.EntryModel>
 
@@ -40,7 +41,16 @@
                 </table>
                     int hours = (budget - timeSum) / 60;
                     int minutes = (budget - timeSum) - hours * 60;
-            <h4 class="text-left p-4">@Html.Raw(String.Format("Budget left: {0} hour(s) and {1} minute(s)", @hours, @minutes))</h4>
+
+                    if(@isProjectActive) {
+                    <h4 class="text-left p-4">@Html.Raw(String.Format("Budget left: {0} hour(s) and {1} minute(s)", @hours, @minutes))</h4>
+
+                    <a href="@Url.Action("CloseProject", "Manager", new { Code = @Model.FirstOrDefault().Code })" class="btn btn-danger">
+                        Close project
+                    </a>
+                    } else {
+                        <h3 class="text-left">Project is closed</h3>  
+                    }
         }
     </div>
 </div>

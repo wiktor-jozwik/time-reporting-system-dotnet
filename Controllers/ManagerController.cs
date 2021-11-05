@@ -11,9 +11,7 @@ namespace NtrTrs.Controllers
     {
         public IActionResult Index() {
             string userName = FileParser.getLoggedUser();
-            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-            List<ActivityModel> activities = activityList.Activities.Where(a => (a.Active == true && a.Manager.ToLower() == userName.ToLower())).ToList();
-            ViewData["Activities"] = activities;
+            ViewData["Activities"] = this.getManagerActivities(userName);
 
             return View();
         }
@@ -32,9 +30,38 @@ namespace NtrTrs.Controllers
 
             allEntries = allEntries.Where(e => e.Code == Code).ToList();
 
-            ViewData["Budget"] = this.getProjectBudgetByCode(Code);
+            ActivityModel activity = this.getActivityByCode(Code);
+            ViewData["Budget"] = activity.Budget;
+            ViewData["Active"] = activity.Active;
 
             return View(allEntries);
+        }
+
+        public IActionResult CloseProject(string Code) {
+            string userName = FileParser.getLoggedUser();
+            ActivityModel activity = this.getActivityByCode(Code);
+
+            bool active = activity.Active;
+                if(!active) {
+                    return View("BadRequest");
+                }
+
+            activity.Active = false;
+            ViewData["Active"] = activity.Active;
+
+            try {
+                ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+
+                int index = activityList.Activities.FindIndex(x => x.Code == Code);
+                activityList.Activities[index] = activity;
+
+                FileParser.writeActivity(activityList);
+            } catch (Exception) {
+                return View("Error");
+            }
+            ViewData["Activities"] = this.getManagerActivities(userName);
+
+            return View("Index");
         }
     private bool validateIfUserIsManager(string code, string userName) {
         ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
@@ -65,9 +92,13 @@ namespace NtrTrs.Controllers
         return allEntries;
     }
 
-    private int getProjectBudgetByCode(string code) {
+    private ActivityModel getActivityByCode(string code) {
         ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-        return activityList.Activities.FirstOrDefault(a => a.Code == code).Budget;
+        return activityList.Activities.FirstOrDefault(a => a.Code == code);
+    }
+    private List<ActivityModel> getManagerActivities(string name) {
+        ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+        return activityList.Activities.Where(a => a.Manager.ToLower() == name.ToLower()).ToList();
     }
     }
 }
