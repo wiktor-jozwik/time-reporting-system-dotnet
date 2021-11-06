@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Monthly Raport page";
+    string Code = (string) ViewData["Code"];
+    string UserName = (string) ViewData["User"];
+}
+@model IEnumerable<NtrTrs.Models.ManagerViewModel>
+
+<div class="container">
+
+    <div class="text-center">
+        @if (Model != null && Model.Count() != 0) {
+                <h4 class="display-4">@Html.Raw(String.Format("User {0}, activity {1}", @UserName, @Code))</h4>
+
+                int index = 0;
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Date)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.TotalTime)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.AcceptedTime)</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var entry in Model) {
+                        index++;
+                        <tbody>
+                            <tr>
+                                <th scope="row">@index</th>
+                                <td>@entry.Date.ToString("yyyy-MM")</td>
+                                <td>@Html.DisplayFor(modelItem => entry.TotalTime)</td>
+                                @if (entry.AcceptedTime == 0) {
+                                    <td>-</td>
+                                } else {
+                                    <td>@Html.DisplayFor(modelItem => entry.AcceptedTime)</td>
+                                }
+                                <td>
+                                    <a asp-action="Accept" asp-route-UserName="@UserName" asp-route-code="@Code" asp-route-Date="@entry.Date">Accept</a> 
+                                </td>  
+                            </tr>
+                        </tbody>
+                    }
+
+                </table>
+            }
+            <a href="@Url.Action("Entries", "Manager", new { Code = @Code })" class="btn btn-primary mt-2">
+                Go Back to User Entries
+            </a>
+    </div>
+
+</div>

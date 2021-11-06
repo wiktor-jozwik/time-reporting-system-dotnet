@@ -12,7 +12,6 @@
                 <h4 class="display-4">@Html.Raw(String.Format("Activity {0}", @Model.FirstOrDefault().Code))</h4>
                 
                 int index = 0;
-                int timeSum = 0;
 
                 <table class="table">
                     <thead>
@@ -27,7 +26,6 @@
 
                     @foreach (var entry in Model) {
                         index++;
-                        timeSum += entry.Time;
                         <tbody>
                             <tr>
                                 <th scope="row">@index</th>
@@ -39,15 +37,22 @@
                         </tbody>
                     }
                 </table>
-                    int hours = (budget - timeSum) / 60;
-                    int minutes = (budget - timeSum) - hours * 60;
+                    int hours = budget / 60;
+                    int minutes = budget - hours * 60;
 
                     if(@isProjectActive) {
                     <h4 class="text-left p-4">@Html.Raw(String.Format("Budget left: {0} hour(s) and {1} minute(s)", @hours, @minutes))</h4>
 
+
+                <div class="form-group d-flex justify-content-between">
                     <a href="@Url.Action("CloseProject", "Manager", new { Code = @Model.FirstOrDefault().Code })" class="btn btn-danger">
                         Close project
                     </a>
+                    <a href="@Url.Action("SelectUser", "Manager", new { Code = @Model.FirstOrDefault().Code })" class="btn btn-primary">
+                        Get User Entries
+                    </a>
+                </div>
+
                     } else {
                         <h3 class="text-left">Project is closed</h3>  
                     }
