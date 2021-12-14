@@ -118,10 +118,10 @@ namespace NtrTrs.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Accept(string UserName, string Code, DateTime Date, [Bind("AcceptedTime")] ManagerViewModel accepted)
         {
-            string filePath = EntryService.getFileNameFromDate(UserName, Date);
+            string filePath = EntrysService.getFileNameFromDate(UserName, Date);
 
             if (System.IO.File.Exists(filePath)) {
-                MonthModel monthData = EntryService.getMonthData(filePath);
+                MonthModel monthData = EntrysService.getMonthData(filePath);
                 AcceptedEntryModel acceptedModel = new AcceptedEntryModel {Code = Code, Time = accepted.AcceptedTime};
                 
                 if (monthData.Accepted != null && monthData.Accepted.Count != 0) {

@@ -6,7 +6,7 @@ namespace NtrTrs.Models
 
     public class UserList 
     {
-        public List<UserModel> Users { get; set;}
+        public List<User> Users { get; set;}
     }
     public class UserModel
     {
