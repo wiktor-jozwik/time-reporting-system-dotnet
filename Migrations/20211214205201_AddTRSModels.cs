@@ -66,18 +66,11 @@ namespace NtrTrs.Migrations
                     code = table.Column<string>(type: "text", nullable: false),
                     ManagerId = table.Column<int>(type: "integer", nullable: true),
                     budget = table.Column<int>(type: "integer", nullable: false),
-                    active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    ActivityId = table.Column<int>(type: "integer", nullable: true)
+                    active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_activities", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_activities_activities_ActivityId",
-                        column: x => x.ActivityId,
-                        principalTable: "activities",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_activities_users_ManagerId",
                         column: x => x.ManagerId,
@@ -117,15 +110,30 @@ namespace NtrTrs.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "subactivities",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    code = table.Column<string>(type: "text", nullable: false),
+                    ActivityId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_subactivities", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_subactivities_activities_ActivityId",
+                        column: x => x.ActivityId,
+                        principalTable: "activities",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_accepted_entries_MonthEntryId",
                 table: "accepted_entries",
                 column: "MonthEntryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_activities_ActivityId",
-                table: "activities",
-                column: "ActivityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_activities_ManagerId",
@@ -141,6 +149,11 @@ namespace NtrTrs.Migrations
                 name: "IX_entries_MonthEntryId",
                 table: "entries",
                 column: "MonthEntryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_subactivities_ActivityId",
+                table: "subactivities",
+                column: "ActivityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -152,10 +165,13 @@ namespace NtrTrs.Migrations
                 name: "entries");
 
             migrationBuilder.DropTable(
-                name: "activities");
+                name: "subactivities");
 
             migrationBuilder.DropTable(
                 name: "month_entries");
+
+            migrationBuilder.DropTable(
+                name: "activities");
 
             migrationBuilder.DropTable(
                 name: "users");

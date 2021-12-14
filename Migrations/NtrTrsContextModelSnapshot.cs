@@ -59,9 +59,6 @@ namespace NtrTrs.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("active");
 
-                    b.Property<int?>("ActivityId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Budget")
                         .HasColumnType("integer")
                         .HasColumnName("budget");
@@ -75,8 +72,6 @@ namespace NtrTrs.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
 
                     b.HasIndex("ManagerId");
 
@@ -150,6 +145,29 @@ namespace NtrTrs.Migrations
                     b.ToTable("month_entries");
                 });
 
+            modelBuilder.Entity("NtrTrs.Subactivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("ActivityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.ToTable("subactivities");
+                });
+
             modelBuilder.Entity("NtrTrs.User", b =>
                 {
                     b.Property<int>("Id")
@@ -182,10 +200,6 @@ namespace NtrTrs.Migrations
 
             modelBuilder.Entity("NtrTrs.Activity", b =>
                 {
-                    b.HasOne("NtrTrs.Activity", null)
-                        .WithMany("Subactivities")
-                        .HasForeignKey("ActivityId");
-
                     b.HasOne("NtrTrs.User", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId");
@@ -202,6 +216,13 @@ namespace NtrTrs.Migrations
                     b.HasOne("NtrTrs.MonthEntry", null)
                         .WithMany("Entries")
                         .HasForeignKey("MonthEntryId");
+                });
+
+            modelBuilder.Entity("NtrTrs.Subactivity", b =>
+                {
+                    b.HasOne("NtrTrs.Activity", null)
+                        .WithMany("Subactivities")
+                        .HasForeignKey("ActivityId");
                 });
 
             modelBuilder.Entity("NtrTrs.Activity", b =>

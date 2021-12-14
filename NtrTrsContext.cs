@@ -24,8 +24,9 @@ namespace NtrTrs
 
         public DbSet<Activity> Activties { get; set; }
 
-        public DbSet<MonthEntry> MonthEntries { get; set; }
+        public DbSet<Subactivity> Subactivities { get; set; }
 
+        public DbSet<MonthEntry> MonthEntries { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseNpgsql("Host=localhost;Database=ntr;Username=postgres;Password=postgres");
@@ -119,9 +120,20 @@ namespace NtrTrs
 
         [Column("active")]
         public bool Active { get; set; }
-        public List<Activity> Subactivities { get; set; }
+        public List<Subactivity> Subactivities { get; set; }
 
         public List<Entry> Entries { get; } = new();
+    }
+
+    [Table("subactivities")]
+    public class Subactivity
+    {
+        [Column("id")]
+        public int Id { get; set; }
+
+        [Column("code")]
+        [Required(ErrorMessage = "Please enter code")]  
+        public string Code { get; set; }
     }
 
     [Table("month_entries")]

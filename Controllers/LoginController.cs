@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NtrTrs.Models;
 using NtrTrs.Services;
-using System.IO;
-
-using System.Text.Json;
 
 namespace NtrTrs.Controllers
 {
@@ -26,8 +21,6 @@ namespace NtrTrs.Controllers
         }
 
         public IActionResult Logged(string userName) {
-            // FileParser.logUser(userName);
-
             _userService.LogUser(userName);
 
             return Redirect("/Entry/Index");

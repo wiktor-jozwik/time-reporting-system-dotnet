@@ -29,6 +29,7 @@ namespace NtrTrs
 
             services.AddTransient<UserService>();
             services.AddTransient<MonthEntryService>();
+            services.AddTransient<ActivityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
