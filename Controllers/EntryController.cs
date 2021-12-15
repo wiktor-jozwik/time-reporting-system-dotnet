@@ -12,11 +12,20 @@ namespace NtrTrs.Controllers
     {
         private readonly UserService _userService;
         private readonly MonthEntryService _monthEntryService;
+        private readonly EntryService _entryService;
+        private readonly ActivityService _activityService;
 
-        public EntryController(UserService userService, MonthEntryService monthEntryService)
+        public EntryController(
+            UserService userService, 
+            MonthEntryService monthEntryService, 
+            ActivityService activityService,
+            EntryService entryService
+            )
         {
             _userService = userService;
             _monthEntryService = monthEntryService;
+            _activityService = activityService;
+            _entryService = entryService;
         }
         public IActionResult Index(string dateString = null)
         {
@@ -40,12 +49,10 @@ namespace NtrTrs.Controllers
                 userName = loggedUser.Name;
             }
 
-            // string filePath = EntrysService.getFileNameFromDate(userName.ToLower(), dateTime);
             ViewData["DateTime"] = dateTime;
             ViewData["UserName"] = userName;
 
             try {
-                // MonthModel monthData = EntrysService.getMonthData(filePath);
                 MonthEntry monthData = _monthEntryService.GetMonthData(dateTime);
 
                 if (monthData != null)
@@ -67,8 +74,10 @@ namespace NtrTrs.Controllers
         public IActionResult Details(int Id, DateTime Date)
         {
             string userName = FileParser.getLoggedUser();
+            // User user = _userService.GetLoggedUser();
             string filePath = EntrysService.getFileNameFromDate(userName, Date);
             try {
+
                 EntryModel entryModel = EntrysService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
                 return View(entryModel);
             } catch (System.IO.FileNotFoundException) {
@@ -87,36 +96,53 @@ namespace NtrTrs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Date,Code,Subcode,Time,Description")] EntryModel entryModel)
+        public IActionResult Create([Bind("Date,Code,Subcode,Time,Description")] Entry entry)
         {
             this.addActivitiesToView();
 
             if (ModelState.IsValid)  {
 
-                string userName = FileParser.getLoggedUser();
+                User loggedUser = _userService.GetLoggedUser();
+                if(loggedUser != null)
+                {
+                    ViewData["UserName"] = loggedUser.Name;
+                }
+                ViewData["DateTime"] = entry.Date;
+                // string userName = FileParser.getLoggedUser();
 
-                string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
+                // string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
 
-                if (System.IO.File.Exists(filePath)) {
-                    MonthModel monthData = EntrysService.getMonthData(filePath);
+                MonthEntry monthData = _monthEntryService.GetMonthData(entry.Date);
+
+                if (monthData != null)
+                {
                     bool frozen = monthData.Frozen;
 
-                    if(frozen) {
+                    if (frozen)
+                    {
                         return View("BadRequest");
                     }
-                } 
-                entryModel.Id = new Random().Next();
+                }
 
-                FileParser.writeEntry(entryModel, filePath);
+                _entryService.CreateEntry(entry);
+
+                // if (System.IO.File.Exists(filePath)) {
+                //     MonthModel monthData = EntrysService.getMonthData(filePath);
+                //     bool frozen = monthData.Frozen;
+
+                //     if(frozen) {
+                //         return View("BadRequest");
+                //     }
+                // } 
+                // entryModel.Id = new Random().Next();
+
+                // FileParser.writeEntry(entryModel, filePath);
 
 
-                ViewData["DateTime"] = entryModel.Date;
-                ViewData["UserName"] = userName;
-
-                return View("Index", EntrysService.getMonthEntries(filePath));  
+                return View("Index", _monthEntryService.GetMonthData(entry.Date));  
             }
 
-            return View(entryModel);
+            return View(entry);
         }
 
 
@@ -238,8 +264,9 @@ namespace NtrTrs.Controllers
         }
 
         private void addActivitiesToView() {
-            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-            List<ActivityModel> activities = activityList.Activities.Where(a => a.Active == true).ToList();
+            List<Activity> activities = _activityService.GetActiveActivities();
+            // ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+            // List<ActivityModel> activities = activityList.Activities.Where(a => a.Active == true).ToList();
             ViewData["Activities"] = activities;
         }
 

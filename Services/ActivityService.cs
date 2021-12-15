@@ -16,6 +16,11 @@ namespace NtrTrs.Services
             return _GetAllActivities();
         }
 
+        public List<Activity> GetActiveActivities()
+        {
+            return _GetAllActivities().Where(a => a.Active == true).ToList();
+        }
+
         public bool CheckCodeUniqueness(string code)
         {
             var activities = _GetAllActivities();
