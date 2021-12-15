@@ -15,7 +15,7 @@ namespace NtrTrs.Controllers
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = EntryService.getRequestedDateTime(dateString);
+                    dateTime = EntrysService.getRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
                     return View("Error");
@@ -24,9 +24,9 @@ namespace NtrTrs.Controllers
             List<ReportViewModel> monthlyReport = null;
 
             string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName.ToLower(), dateTime);
+            string filePath = EntrysService.getFileNameFromDate(userName.ToLower(), dateTime);
             try {
-                MonthModel monthData = EntryService.getMonthData(filePath);
+                MonthModel monthData = EntrysService.getMonthData(filePath);
                 ViewData["Frozen"] = monthData.Frozen;
 
                 monthlyReport = this.getMontlyReport(monthData);
@@ -46,11 +46,11 @@ namespace NtrTrs.Controllers
 
         public IActionResult Submit(DateTime Date) {
             string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            string filePath = EntrysService.getFileNameFromDate(userName, Date);
 
 
             List<ReportViewModel> monthlyReport = null;
-            MonthModel monthData = EntryService.getMonthData(filePath);
+            MonthModel monthData = EntrysService.getMonthData(filePath);
 
             bool frozen = monthData.Frozen;
                 if(frozen) {

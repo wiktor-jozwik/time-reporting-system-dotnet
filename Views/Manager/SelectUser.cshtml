@@ -1,26 +1,28 @@
 @{
     ViewData["Title"] = "Login Page";
-    List<User> users = (List<User>) ViewData["Users"];
+    List<UserModel> users = (List<UserModel>) ViewData["Users"];
+    string Code = (string) ViewData["Code"];
     }
 
 <div class="text-center">
     <h3 class="display-4">Select User</h3>
-        <form asp-controller="Login" asp-action="Logged" method="get">
+        <form asp-controller="Manager" asp-action="UserEntries" method="get">
             <div class="col-12">
+                <input type="hidden" id="Code" name="Code" value="@Code" /> 
                 <div class="row">
-                    <select name="userName" class="custom-select">
+                    <select name="UserName" class="custom-select">
                     @{
                         if (users == null || users.Count == 0) {
-                            <h3 class="display-4">There are no users in system.</h3>
+                            <h3 class="display-4">No user logged time in this project</h3>
                         } else {
-                            foreach(User user in users) {
+                            foreach(UserModel user in users) {
                                 <option>@user.Name</option>
                             }
                         }
                     }
                     </select> 
                     <div class="col-xs-6 mt-3">
-                        <input type="submit" value="Submit" class="btn btn-primary" />
+                        <input type="submit" value="User entries" class="btn btn-primary" />
                     </div>
                 </div>  
             </div>

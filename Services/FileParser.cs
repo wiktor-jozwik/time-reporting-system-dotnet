@@ -16,7 +16,9 @@ public static class FileParser
             return System.Text.Json.JsonSerializer.Deserialize<UserList>(jsonString);
         } else if (typeof(T) == typeof(ActivityList)) {
             return System.Text.Json.JsonSerializer.Deserialize<ActivityList>(jsonString);
-        } 
+        } else if (typeof(T) == typeof(MonthWithUserModel)) {
+            return System.Text.Json.JsonSerializer.Deserialize<MonthWithUserModel>(jsonString);
+        }
         else {
             return false;
         }

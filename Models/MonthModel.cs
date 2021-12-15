@@ -13,4 +13,9 @@ namespace NtrTrs.Models
 
         public List<AcceptedEntryModel> Accepted { get; set; }
     }
+
+    public class MonthWithUserModel : MonthModel 
+    {
+        public string User { get; set; }
+    }
 }

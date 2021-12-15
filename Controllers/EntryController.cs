@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NtrTrs.Models;
-using System.IO;
+using NtrTrs.Services;
 
 using System.Linq;
 
@@ -10,32 +10,49 @@ namespace NtrTrs.Controllers
 {
     public class EntryController : Controller
     {
+        private readonly UserService _userService;
+        private readonly MonthEntryService _monthEntryService;
+
+        public EntryController(UserService userService, MonthEntryService monthEntryService)
+        {
+            _userService = userService;
+            _monthEntryService = monthEntryService;
+        }
         public IActionResult Index(string dateString = null)
         {
             DateTime dateTime;
-            List<EntryModel> monthEntries = null;
+            List<Entry> monthEntries = null;
 
             if (dateString == null) {
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = EntryService.getRequestedDateTime(dateString);
+                    dateTime = EntrysService.getRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
                     return View("BadRequest");
                 }
             }
-            string userName = FileParser.getLoggedUser();
 
-            string filePath = EntryService.getFileNameFromDate(userName.ToLower(), dateTime);
+            User loggedUser = _userService.GetLoggedUser();
+            string userName = "";
+            if (loggedUser != null) {
+                userName = loggedUser.Name;
+            }
+
+            // string filePath = EntrysService.getFileNameFromDate(userName.ToLower(), dateTime);
             ViewData["DateTime"] = dateTime;
             ViewData["UserName"] = userName;
 
             try {
-                MonthModel monthData = EntryService.getMonthData(filePath);
-                monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
-                ViewData["Frozen"] = monthData.Frozen;
+                // MonthModel monthData = EntrysService.getMonthData(filePath);
+                MonthEntry monthData = _monthEntryService.GetMonthData(dateTime);
 
+                if (monthData != null)
+                {
+                    monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
+                    ViewData["Frozen"] = monthData.Frozen;
+                }
 
             } catch (System.IO.FileNotFoundException) {
                 monthEntries = null;
@@ -50,9 +67,9 @@ namespace NtrTrs.Controllers
         public IActionResult Details(int Id, DateTime Date)
         {
             string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            string filePath = EntrysService.getFileNameFromDate(userName, Date);
             try {
-                EntryModel entryModel = EntryService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+                EntryModel entryModel = EntrysService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
                 return View(entryModel);
             } catch (System.IO.FileNotFoundException) {
                 return View("BadRequest");
@@ -78,10 +95,10 @@ namespace NtrTrs.Controllers
 
                 string userName = FileParser.getLoggedUser();
 
-                string filePath = EntryService.getFileNameFromDate(userName, entryModel.Date);
+                string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
 
                 if (System.IO.File.Exists(filePath)) {
-                    MonthModel monthData = EntryService.getMonthData(filePath);
+                    MonthModel monthData = EntrysService.getMonthData(filePath);
                     bool frozen = monthData.Frozen;
 
                     if(frozen) {
@@ -96,7 +113,7 @@ namespace NtrTrs.Controllers
                 ViewData["DateTime"] = entryModel.Date;
                 ViewData["UserName"] = userName;
 
-                return View("Index", EntryService.getMonthEntries(filePath));  
+                return View("Index", EntrysService.getMonthEntries(filePath));  
             }
 
             return View(entryModel);
@@ -106,10 +123,10 @@ namespace NtrTrs.Controllers
         public IActionResult Edit(DateTime Date, int Id)
         {
             string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            string filePath = EntrysService.getFileNameFromDate(userName, Date);
 
             try {
-                MonthModel monthData = EntryService.getMonthData(filePath);
+                MonthModel monthData = EntrysService.getMonthData(filePath);
                 EntryModel entryModel = monthData.Entries.FirstOrDefault(x => x.Id == Id);
 
                 this.addActivitiesToView();
@@ -134,11 +151,11 @@ namespace NtrTrs.Controllers
             if (ModelState.IsValid)  {  
                 string userName = FileParser.getLoggedUser();
 
-                string filePath = EntryService.getFileNameFromDate(userName, entryModel.Date);
+                string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
 
                 try {
                     List<EntryModel> monthEntries = null;
-                    MonthModel monthData = EntryService.getMonthData(filePath);
+                    MonthModel monthData = EntrysService.getMonthData(filePath);
                     bool frozen = monthData.Frozen;
                     if(frozen) {
                         return View("BadRequest");
@@ -168,11 +185,11 @@ namespace NtrTrs.Controllers
             this.addActivitiesToView();
 
             string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            string filePath = EntrysService.getFileNameFromDate(userName, Date);
 
             EntryModel entryModel = null;
             try {
-                entryModel = EntryService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
+                entryModel = EntrysService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
             } catch (System.IO.FileNotFoundException) {
                 return View("BadRequest");
             } catch (Exception) {
@@ -191,11 +208,11 @@ namespace NtrTrs.Controllers
         {
             string userName = FileParser.getLoggedUser();
 
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            string filePath = EntrysService.getFileNameFromDate(userName, Date);
 
             try {
                 List<EntryModel> monthEntries = null;
-                MonthModel monthData = EntryService.getMonthData(filePath);
+                MonthModel monthData = EntrysService.getMonthData(filePath);
                 bool frozen = monthData.Frozen;
                 if(frozen) {
                     return View("BadRequest");

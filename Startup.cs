@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+
+using NtrTrs.Services;
 
 namespace NtrTrs
 {
@@ -23,7 +21,15 @@ namespace NtrTrs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<NtrTrsContext>(options => options.UseNpgsql("Host=localhost;Database=ntr;Username=postgres;Password=postgres"));
+            services.AddScoped<DbContext, NtrTrsContext>();
+
+
             services.AddControllersWithViews();
+
+            services.AddTransient<UserService>();
+            services.AddTransient<MonthEntryService>();
+            services.AddTransient<ActivityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
