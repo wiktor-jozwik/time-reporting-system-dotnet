@@ -26,6 +26,18 @@ namespace NtrTrs.Services
             return _GetActivityByCode(Code);
         }
 
+        public List<Activity> GetManagerActivities(User manager)
+        {
+            return _GetManagerActivities(manager);
+        }
+
+        public void CloseProject(Activity activity)
+        {
+            activity.Active = false;
+            _context.Update(activity);
+            _context.SaveChanges();
+        }
+
         public bool CheckCodeUniqueness(string code)
         {
             var activities = _GetAllActivities();
@@ -33,15 +45,21 @@ namespace NtrTrs.Services
             return !activities.Any(a => a.Code == code);
         }
 
+        public bool ValidateIfUserIsManager(string code, User user)
+        {
+            Activity activity = _GetActivityByCode(code);
+            return activity.Manager == user;
+        }
+
         public void CreateActivity(Activity activity)
         {
-            _context.Activties.Add(activity);
+            _context.Activities.Add(activity);
             _context.SaveChanges();
         }
 
         private List<Activity> _GetAllActivities()
         {
-            return _context.Activties
+            return _context.Activities
                     .Include(a => a.Manager)
                     .Include(a => a.Subactivities)
                     .ToList();
@@ -49,7 +67,14 @@ namespace NtrTrs.Services
 
         private Activity _GetActivityByCode(string code)
         {
-            return _context.Activties.Where(a => a.Code == code).FirstOrDefault();
+            return _context.Activities.Where(a => a.Code == code).FirstOrDefault();
+        }
+
+        private List<Activity> _GetManagerActivities(User manager)
+        {
+            return _context.Activities
+                    .Where(a => a.Manager == manager)
+                    .ToList();
         }
     }
 }

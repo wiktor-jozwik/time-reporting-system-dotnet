@@ -22,7 +22,7 @@ namespace NtrTrs
 
         public DbSet<AcceptedEntry> AcceptedEntries { get; set; }
 
-        public DbSet<Activity> Activties { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
         public DbSet<Subactivity> Subactivities { get; set; }
 
@@ -59,6 +59,8 @@ namespace NtrTrs
 
         [Column("logged_in")]
         public bool LoggedIn { get; set; }
+
+        public List<Entry> Entries { get; } = new();
     }
 
     [Table("entries")]
@@ -87,6 +89,8 @@ namespace NtrTrs
 
         [Column("description")]
         public string Description { get; set; }
+
+        public User User { get; set; }
     }
 
     [Table("accepted_entries")]
@@ -149,5 +153,7 @@ namespace NtrTrs
         public List<Entry> Entries { get; set; }
 
         public List<AcceptedEntry> Accepted { get; set; }
+
+        public User User { get; set; }
     }
 }

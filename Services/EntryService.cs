@@ -1,6 +1,7 @@
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace NtrTrs.Services
 {
@@ -12,6 +13,17 @@ namespace NtrTrs.Services
         public EntryService(NtrTrsContext context, ActivityService activityService) {
             _context = context;
             _activityService = activityService;
+        }
+
+        public List<Entry> GetEntriesFromAllMonths(List<MonthEntry> allMonthsData)
+        {
+            List<Entry> allEntries = new List<Entry>();
+
+            foreach(var month in allMonthsData) {
+                allEntries.AddRange(month.Entries);
+            }
+
+            return allEntries;
         }
 
         public Entry GetEntryById(int id)

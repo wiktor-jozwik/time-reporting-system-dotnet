@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NtrTrs;
@@ -9,9 +10,10 @@ using NtrTrs;
 namespace NtrTrs.Migrations
 {
     [DbContext(typeof(NtrTrsContext))]
-    partial class NtrTrsContextModelSnapshot : ModelSnapshot
+    [Migration("20211216182332_AddUserToEntries")]
+    partial class AddUserToEntries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,12 +143,7 @@ namespace NtrTrs.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("frozen");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("month_entries");
                 });
@@ -236,15 +233,6 @@ namespace NtrTrs.Migrations
                     b.Navigation("Activity");
 
                     b.Navigation("MonthEntry");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("NtrTrs.MonthEntry", b =>
-                {
-                    b.HasOne("NtrTrs.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

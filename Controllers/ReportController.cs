@@ -2,12 +2,22 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NtrTrs.Models;
-using System.Linq;
+using NtrTrs.Services;
 
 namespace NtrTrs.Controllers
 {
     public class ReportController : Controller
     {
+        private readonly UserService _userService;
+        private readonly MonthEntryService _monthEntryService;
+
+                public ReportController(
+                        UserService userService, 
+                        MonthEntryService monthEntryService) 
+        {
+            _userService = userService;
+            _monthEntryService = monthEntryService;
+        }
         public IActionResult Index(string dateString = null) {
             DateTime dateTime;
 
@@ -23,34 +33,38 @@ namespace NtrTrs.Controllers
             }
             List<ReportViewModel> monthlyReport = null;
 
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntrysService.getFileNameFromDate(userName.ToLower(), dateTime);
-            try {
-                MonthModel monthData = EntrysService.getMonthData(filePath);
-                ViewData["Frozen"] = monthData.Frozen;
-
-                monthlyReport = this.getMontlyReport(monthData);
-
-
-            } catch (System.IO.FileNotFoundException) {
-                monthlyReport = null;
-
-            } catch (Exception e) {
-                System.Console.WriteLine(e.Message);
+            User loggedUser = _userService.GetLoggedUser();
+            if (loggedUser == null)
+            {
                 return View("Error");
             }
             ViewData["DateTime"] = dateTime;
-            ViewData["UserName"] = userName;
-            return View(monthlyReport);
+            ViewData["UserName"] = loggedUser.Name;
+
+            MonthEntry monthData = _monthEntryService.GetMonthDataForUser(dateTime, loggedUser);
+
+            if (monthData != null)
+            {
+                ViewData["Frozen"] = monthData.Frozen;
+
+                monthlyReport = _monthEntryService.GetMontlyReport(monthData);
+
+                return View(monthlyReport);
+            }
+
+            return View();
         }
 
         public IActionResult Submit(DateTime Date) {
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntrysService.getFileNameFromDate(userName, Date);
+            User loggedUser = _userService.GetLoggedUser();
+            if (loggedUser == null)
+            {
+                return View("Error");
+            }
 
 
             List<ReportViewModel> monthlyReport = null;
-            MonthModel monthData = EntrysService.getMonthData(filePath);
+            MonthEntry monthData = _monthEntryService.GetMonthDataForUser(Date, loggedUser);
 
             bool frozen = monthData.Frozen;
                 if(frozen) {
@@ -60,10 +74,10 @@ namespace NtrTrs.Controllers
             monthData.Frozen = true;
             ViewData["Frozen"] = monthData.Frozen;
 
-            FileParser.writeMonth(monthData, filePath);
+            _monthEntryService.FreezeMonth(monthData);
 
             try {
-                monthlyReport = this.getMontlyReport(monthData);
+                monthlyReport = _monthEntryService.GetMontlyReport(monthData);
 
             } catch (System.IO.FileNotFoundException) {
                 monthlyReport = null;
@@ -72,30 +86,9 @@ namespace NtrTrs.Controllers
                 return View("Error");
             }
             ViewData["DateTime"] = Date;
-            ViewData["UserName"] = userName;
+            ViewData["UserName"] = loggedUser.Name;
 
             return View("Index", monthlyReport);
-        }
-
-        private List<ReportViewModel> getMontlyReport(MonthModel monthData) {
-            List<ReportViewModel> monthlyReport = null;
-            monthlyReport = monthData.Entries
-                                .GroupBy(en => en.Code)
-                                .Select(mr => new ReportViewModel {
-                                    Code = mr.First().Code,
-                                    TotalTime = mr.Sum(c => c.Time),
-                                }).ToList();
-
-            if (monthData.Accepted != null) {
-                foreach(var m in monthlyReport) {
-                    var acceptedFound = monthData.Accepted.Where(e => e.Code == m.Code).FirstOrDefault(); 
-                    if (acceptedFound != null) {
-                        m.AcceptedTime = acceptedFound.Time;
-                    }
-                }
-            }
-            
-            return monthlyReport;
         }
     }
 }

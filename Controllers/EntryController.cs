@@ -53,7 +53,7 @@ namespace NtrTrs.Controllers
             ViewData["UserName"] = userName;
 
             try {
-                MonthEntry monthData = _monthEntryService.GetMonthData(dateTime);
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(dateTime, loggedUser);
 
                 if (monthData != null)
                 {
@@ -104,12 +104,13 @@ namespace NtrTrs.Controllers
                 User loggedUser = _userService.GetLoggedUser();
                 if(loggedUser != null)
                 {
+                    entry.User = loggedUser;
                     ViewData["UserName"] = loggedUser.Name;
                 }
                 ViewData["DateTime"] = entry.Date;
 
                 Activity activity = _activityService.GetActivityByCode(Code);
-                MonthEntry monthData = _monthEntryService.GetMonthData(entry.Date);
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser);
 
                 if (monthData != null)
                 {
@@ -124,6 +125,7 @@ namespace NtrTrs.Controllers
                 {
                     monthData = new MonthEntry();
                     monthData.Date = entry.Date;
+                    monthData.User = loggedUser;
                     _monthEntryService.CreateMonthEntry(monthData);
                 }
 
@@ -136,7 +138,7 @@ namespace NtrTrs.Controllers
 
                 _entryService.CreateEntry(entry);
 
-                return View("Index", _monthEntryService.GetMonthData(entry.Date).Entries.OrderBy(x => x.Date).ToList());  
+                return View("Index", _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser).Entries.OrderBy(x => x.Date).ToList());  
             }
 
             return View(entry);
@@ -146,8 +148,10 @@ namespace NtrTrs.Controllers
         public IActionResult Edit(DateTime Date, int Id)
         {
             try {
-                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+                User loggedUser = _userService.GetLoggedUser();
                 Entry entry = _entryService.GetEntryById(Id);
+
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser);
 
                 this.addActivitiesToView();
                 ViewData["Frozen"] = monthData.Frozen;
@@ -167,7 +171,9 @@ namespace NtrTrs.Controllers
             ViewData["DateTime"] = entry.Date;
 
             if (ModelState.IsValid)  {
-                MonthEntry monthData = _monthEntryService.GetMonthData(entry.Date);
+                User loggedUser = _userService.GetLoggedUser();
+
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser);
 
                 if (monthData != null)
                 {
@@ -189,7 +195,7 @@ namespace NtrTrs.Controllers
 
                     ViewData["UserName"] = userName;
                     ViewData["Frozen"] = frozen;
-                    return View("Index", _monthEntryService.GetMonthData(entry.Date).Entries.OrderBy(x => x.Date).ToList());
+                    return View("Index", _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser).Entries.OrderBy(x => x.Date).ToList());
                 }
             }
             return View(entry);
@@ -200,7 +206,9 @@ namespace NtrTrs.Controllers
             this.addActivitiesToView();
 
             try {
-                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+                User loggedUser = _userService.GetLoggedUser();
+
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(Date, loggedUser);
                 Entry entry = _entryService.GetEntryById(Id);
 
                 this.addActivitiesToView();
@@ -221,7 +229,9 @@ namespace NtrTrs.Controllers
             ViewData["DateTime"] = Date;
 
             if (ModelState.IsValid)  {
-                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+                User loggedUser = _userService.GetLoggedUser();
+                
+                MonthEntry monthData = _monthEntryService.GetMonthDataForUser(Date, loggedUser);
 
                 if (monthData != null)
                 {
@@ -243,7 +253,7 @@ namespace NtrTrs.Controllers
 
                     ViewData["UserName"] = userName;
                     ViewData["Frozen"] = frozen;
-                    return View("Index", _monthEntryService.GetMonthData(Date).Entries.OrderBy(x => x.Date).ToList());
+                    return View("Index", _monthEntryService.GetMonthDataForUser(Date, loggedUser).Entries.OrderBy(x => x.Date).ToList());
                 }
             }
             return View("BadRequest");

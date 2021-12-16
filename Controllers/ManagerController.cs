@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NtrTrs.Models;
+using NtrTrs.Services;
 using System.Linq;
 using System.IO;
 
@@ -9,39 +10,57 @@ namespace NtrTrs.Controllers
 {
     public class ManagerController : Controller
     {
-        public IActionResult Index() {
-            string userName = FileParser.getLoggedUser();
-            ViewData["Activities"] = this.getManagerActivities(userName);
+        private readonly UserService _userService;
+        private readonly MonthEntryService _monthEntryService;
+        private readonly ActivityService _activityService;
 
-            return View();
+        private readonly EntryService _entryService;
+
+        public ManagerController(
+                        UserService userService, 
+                        ActivityService activityService, 
+                        MonthEntryService monthEntryService,
+                        EntryService entryService)
+        {
+            _userService = userService;
+            _monthEntryService = monthEntryService;
+            _activityService = activityService;
+            _entryService = entryService;
+        }
+        public IActionResult Index() {
+            User loggedUser = _userService.GetLoggedUser();
+            List<Activity> activities = _activityService.GetManagerActivities(loggedUser);
+
+            return View(activities);
         }
         public IActionResult Entries(string Code) {
             List<EntryModel> monthEntriesForAllUsers = new List<EntryModel>();
             string userName = FileParser.getLoggedUser();
-            bool valid = this.validateIfUserIsManager(Code, userName);
+            User loggedUser = _userService.GetLoggedUser();
+
+            bool valid = _activityService.ValidateIfUserIsManager(Code, loggedUser);
 
             if(!valid) {
                 return View("BadRequest");
             }
 
-            List<MonthModel> allMonthsData = this.readAllMonthsAllUsersData();
-            List<EntryModel> allEntries = this.getEntriesFromAllMonths(allMonthsData);
+            List<MonthEntry> allMonthsData = _monthEntryService.GetAllMonthsData();
+            List<Entry> allEntries = _entryService.GetEntriesFromAllMonths(allMonthsData);
+
+            Activity activity = _activityService.GetActivityByCode(Code);
 
 
-            allEntries = allEntries.Where(e => e.Code == Code).OrderBy(e => e.Date).ToList();
+            allEntries = allEntries.Where(e => e.Activity == activity).OrderBy(e => e.Date).ToList();
 
             int acceptedTimeForProject = 0;
             foreach(var m in allMonthsData) {
                 if (m.Accepted != null){
-                    var acc = m.Accepted.Where(e => e.Code == Code).FirstOrDefault();
+                    var acc = m.Accepted.Where(e => e.Activity == activity).FirstOrDefault();
                     if (acc != null) {
                         acceptedTimeForProject += acc.Time;
                     }
                 }
             }
-            // allMonthsData.ForEach(a => acceptedTimeForProject += a.Accepted.Where(e => e.Code == Code).FirstOrDefault().Time);
-
-            ActivityModel activity = this.getActivityByCode(Code);
             int budgetLeft = activity.Budget - acceptedTimeForProject;
 
             ViewData["Budget"] = budgetLeft;
@@ -51,8 +70,7 @@ namespace NtrTrs.Controllers
         }
 
         public IActionResult CloseProject(string Code) {
-            string userName = FileParser.getLoggedUser();
-            ActivityModel activity = this.getActivityByCode(Code);
+            Activity activity = _activityService.GetActivityByCode(Code);
 
             bool active = activity.Active;
                 if(!active) {
@@ -62,36 +80,33 @@ namespace NtrTrs.Controllers
             activity.Active = false;
             ViewData["Active"] = activity.Active;
 
-            try {
-                ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
+            _activityService.CloseProject(activity);
 
-                int index = activityList.Activities.FindIndex(x => x.Code == Code);
-                activityList.Activities[index] = activity;
+            User loggedUser = _userService.GetLoggedUser();
+            List<Activity> activities = _activityService.GetManagerActivities(loggedUser);
 
-                FileParser.writeActivity(activityList);
-            } catch (Exception) {
-                return View("Error");
-            }
-            ViewData["Activities"] = this.getManagerActivities(userName);
+            ViewData["Activities"] = activities;
 
             return View("Index");
         }
 
         public IActionResult SelectUser(string Code) {
-            List<MonthWithUserModel> monthsDataWithUser = this.readMonthsDataWithUser();
+            List<MonthEntry> monthData = _monthEntryService.GetAllMonthsData();
+            // List<MonthWithUserModel> monthsDataWithUser = this.readMonthsDataWithUser();
             // Accepted month
-            monthsDataWithUser = monthsDataWithUser.Where(m => m.Frozen == true).ToList();
-            monthsDataWithUser = monthsDataWithUser.Where(e => e.Entries.Any(x => x.Code == Code)).ToList();
+            monthData = monthData.Where(m => m.Frozen == true).ToList();
+            monthData = monthData.Where(e => e.Entries.Any(x => x.Activity.Code == Code)).ToList();
 
             List<UserModel> users = new List<UserModel>();
-            foreach (var month in monthsDataWithUser) {
-                var user = new UserModel {Name = month.User};
-                if(!users.Any(u => u.Name == user.Name)) {
-                    users.Add(user);
-                }
-            }
+            // foreach (var month in monthData) {
+            //     var user = new UserModel {Name = month.Entries};
 
-            ViewData["Users"] = users;
+            //     if(!users.Any(u => u.Name == user.Name)) {
+            //         users.Add(user);
+            //     }
+            // }
+
+            // ViewData["Users"] = users;
             ViewData["Code"] = Code;
             return View();
         }
@@ -121,7 +136,7 @@ namespace NtrTrs.Controllers
             string filePath = EntrysService.getFileNameFromDate(UserName, Date);
 
             if (System.IO.File.Exists(filePath)) {
-                MonthModel monthData = EntrysService.getMonthData(filePath);
+                MonthModel monthData = EntrysService.GetMonthDataForUser(filePath);
                 AcceptedEntryModel acceptedModel = new AcceptedEntryModel {Code = Code, Time = accepted.AcceptedTime};
                 
                 if (monthData.Accepted != null && monthData.Accepted.Count != 0) {

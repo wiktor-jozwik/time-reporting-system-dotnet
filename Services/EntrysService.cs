@@ -16,7 +16,7 @@ public static class EntrysService {
             return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";
         }
 
-        public static MonthModel getMonthData(string filePath) {
+        public static MonthModel GetMonthDataForUser(string filePath) {
             return FileParser.readJson<MonthModel>(filePath);
         }
         public static List<EntryModel> getMonthEntries(string filePath) {
