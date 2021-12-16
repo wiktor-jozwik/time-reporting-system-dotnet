@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace NtrTrs.Services
 {
@@ -16,9 +16,19 @@ namespace NtrTrs.Services
             return _GetMonthData(datetime);
         }
 
+        public void CreateMonthEntry(MonthEntry monthEntry)
+        {
+            _context.MonthEntries.Add(monthEntry);
+            _context.SaveChanges();
+        }
+
         private MonthEntry _GetMonthData(DateTime dateTime)
         {
-            return _context.MonthEntries.Where(m => m.Date == dateTime).FirstOrDefault();
+            return _context.MonthEntries
+                            .Include(m => m.Entries)
+                            .ThenInclude(e => e.Activity)
+                            .Where(m => m.Date.Month == dateTime.Month)
+                            .FirstOrDefault();
         }
     }
 }

@@ -27,9 +27,8 @@ namespace NtrTrs.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("text")
-                        .HasColumnName("code");
+                    b.Property<int?>("ActivityId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("MonthEntryId")
                         .HasColumnType("integer");
@@ -39,6 +38,8 @@ namespace NtrTrs.Migrations
                         .HasColumnName("time");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
 
                     b.HasIndex("MonthEntryId");
 
@@ -88,11 +89,6 @@ namespace NtrTrs.Migrations
 
                     b.Property<int?>("ActivityId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("code");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp without time zone")
@@ -193,9 +189,15 @@ namespace NtrTrs.Migrations
 
             modelBuilder.Entity("NtrTrs.AcceptedEntry", b =>
                 {
+                    b.HasOne("NtrTrs.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId");
+
                     b.HasOne("NtrTrs.MonthEntry", null)
                         .WithMany("Accepted")
                         .HasForeignKey("MonthEntryId");
+
+                    b.Navigation("Activity");
                 });
 
             modelBuilder.Entity("NtrTrs.Activity", b =>
@@ -209,13 +211,17 @@ namespace NtrTrs.Migrations
 
             modelBuilder.Entity("NtrTrs.Entry", b =>
                 {
-                    b.HasOne("NtrTrs.Activity", null)
+                    b.HasOne("NtrTrs.Activity", "Activity")
                         .WithMany("Entries")
                         .HasForeignKey("ActivityId");
 
-                    b.HasOne("NtrTrs.MonthEntry", null)
+                    b.HasOne("NtrTrs.MonthEntry", "MonthEntry")
                         .WithMany("Entries")
                         .HasForeignKey("MonthEntryId");
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("MonthEntry");
                 });
 
             modelBuilder.Entity("NtrTrs.Subactivity", b =>

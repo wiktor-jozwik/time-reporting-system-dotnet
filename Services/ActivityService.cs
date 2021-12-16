@@ -21,6 +21,11 @@ namespace NtrTrs.Services
             return _GetAllActivities().Where(a => a.Active == true).ToList();
         }
 
+        public Activity GetActivityByCode(string Code)
+        {
+            return _GetActivityByCode(Code);
+        }
+
         public bool CheckCodeUniqueness(string code)
         {
             var activities = _GetAllActivities();
@@ -40,6 +45,11 @@ namespace NtrTrs.Services
                     .Include(a => a.Manager)
                     .Include(a => a.Subactivities)
                     .ToList();
+        }
+
+        private Activity _GetActivityByCode(string code)
+        {
+            return _context.Activties.Where(a => a.Code == code).FirstOrDefault();
         }
     }
 }

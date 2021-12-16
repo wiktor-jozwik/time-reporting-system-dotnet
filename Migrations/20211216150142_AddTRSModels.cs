@@ -37,27 +37,6 @@ namespace NtrTrs.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "accepted_entries",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    code = table.Column<string>(type: "text", nullable: true),
-                    time = table.Column<int>(type: "integer", nullable: false),
-                    MonthEntryId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_accepted_entries", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_accepted_entries_month_entries_MonthEntryId",
-                        column: x => x.MonthEntryId,
-                        principalTable: "month_entries",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "activities",
                 columns: table => new
                 {
@@ -80,18 +59,44 @@ namespace NtrTrs.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "accepted_entries",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ActivityId = table.Column<int>(type: "integer", nullable: true),
+                    time = table.Column<int>(type: "integer", nullable: false),
+                    MonthEntryId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_accepted_entries", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_accepted_entries_activities_ActivityId",
+                        column: x => x.ActivityId,
+                        principalTable: "activities",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_accepted_entries_month_entries_MonthEntryId",
+                        column: x => x.MonthEntryId,
+                        principalTable: "month_entries",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "entries",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    code = table.Column<string>(type: "text", nullable: false),
+                    ActivityId = table.Column<int>(type: "integer", nullable: true),
+                    MonthEntryId = table.Column<int>(type: "integer", nullable: true),
                     subcode = table.Column<string>(type: "text", nullable: true),
                     time = table.Column<int>(type: "integer", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    ActivityId = table.Column<int>(type: "integer", nullable: true),
-                    MonthEntryId = table.Column<int>(type: "integer", nullable: true)
+                    description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -129,6 +134,11 @@ namespace NtrTrs.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_accepted_entries_ActivityId",
+                table: "accepted_entries",
+                column: "ActivityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_accepted_entries_MonthEntryId",

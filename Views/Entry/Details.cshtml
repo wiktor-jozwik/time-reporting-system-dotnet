@@ -1,4 +1,4 @@
-@model NtrTrs.Models.EntryModel
+@model Entry
 
 <!DOCTYPE html>
 
@@ -27,8 +27,8 @@
               </tr>
 
                 <tr>
-                  <td>@Html.DisplayNameFor(model => model.Code)</td>
-                  <td>@Html.DisplayFor(model => model.Code)</td>
+                  <td>@Html.DisplayNameFor(model => model.Activity.Code)</td>
+                  <td>@Html.DisplayFor(model => model.Activity.Code)</td>
               </tr>
 
               <tr>
@@ -53,7 +53,7 @@
         <a href="@Url.Action("Index", "Entry", new { dateString = @Model.Date.ToString("yyyy-MM") })" class="btn">
             <i class="fas fa-angle-left arrow"></i>
         </a>
-    <a asp-action="Edit" class="btn btn-primary" asp-route-date="@Model.Date.ToString("MM/dd/yyyy")" asp-route-id="@Model.Id">Edit</a> 
+    <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model.Id">Edit</a> 
   </div>
 </div>
 </body>

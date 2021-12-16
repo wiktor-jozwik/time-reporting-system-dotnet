@@ -74,10 +74,9 @@ namespace NtrTrs
         [Required(ErrorMessage = "Please enter date")]  
         public DateTime Date { get; set; }
 
-        [Required(ErrorMessage = "Please enter code of project")]  
+        public Activity Activity { get; set; }
 
-        [Column("code")]
-        public String Code { get; set; }
+        public MonthEntry MonthEntry {get; set; }
 
         [Column("subcode")]
         public string Subcode { get; set; }
@@ -96,8 +95,7 @@ namespace NtrTrs
         [Column("id")]
         public int Id { get; set; }
 
-        [Column("code")]
-        public string Code { get; set; }
+        public Activity Activity { get; set; }
 
         [Column("time")]
         public int Time { get; set; }

@@ -57,7 +57,8 @@ namespace NtrTrs.Controllers
 
                 if (monthData != null)
                 {
-                    monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
+                    monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();;
+                    // monthEntries = monthData.Entries.OrderBy(x => x.Date).ToList();
                     ViewData["Frozen"] = monthData.Frozen;
                 }
 
@@ -73,17 +74,15 @@ namespace NtrTrs.Controllers
 
         public IActionResult Details(int Id, DateTime Date)
         {
-            string userName = FileParser.getLoggedUser();
-            // User user = _userService.GetLoggedUser();
-            string filePath = EntrysService.getFileNameFromDate(userName, Date);
-            try {
+            Entry entry = _entryService.GetEntryById(Id);
 
-                EntryModel entryModel = EntrysService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
-                return View(entryModel);
-            } catch (System.IO.FileNotFoundException) {
+            if (entry != null)
+            {
+                return View(entry);
+            } 
+            else 
+            {
                 return View("BadRequest");
-            } catch (Exception) {
-                return View("Error");
             }
         }
         
@@ -96,7 +95,7 @@ namespace NtrTrs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Date,Code,Subcode,Time,Description")] Entry entry)
+        public IActionResult Create(string Code, [Bind("Date,Subcode,Time,Description")] Entry entry)
         {
             this.addActivitiesToView();
 
@@ -108,10 +107,8 @@ namespace NtrTrs.Controllers
                     ViewData["UserName"] = loggedUser.Name;
                 }
                 ViewData["DateTime"] = entry.Date;
-                // string userName = FileParser.getLoggedUser();
 
-                // string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
-
+                Activity activity = _activityService.GetActivityByCode(Code);
                 MonthEntry monthData = _monthEntryService.GetMonthData(entry.Date);
 
                 if (monthData != null)
@@ -122,24 +119,24 @@ namespace NtrTrs.Controllers
                     {
                         return View("BadRequest");
                     }
+                } 
+                else 
+                {
+                    monthData = new MonthEntry();
+                    monthData.Date = entry.Date;
+                    _monthEntryService.CreateMonthEntry(monthData);
+                }
+
+                entry.MonthEntry = monthData;
+
+                if (activity != null)
+                {
+                    entry.Activity = activity;
                 }
 
                 _entryService.CreateEntry(entry);
 
-                // if (System.IO.File.Exists(filePath)) {
-                //     MonthModel monthData = EntrysService.getMonthData(filePath);
-                //     bool frozen = monthData.Frozen;
-
-                //     if(frozen) {
-                //         return View("BadRequest");
-                //     }
-                // } 
-                // entryModel.Id = new Random().Next();
-
-                // FileParser.writeEntry(entryModel, filePath);
-
-
-                return View("Index", _monthEntryService.GetMonthData(entry.Date));  
+                return View("Index", _monthEntryService.GetMonthData(entry.Date).Entries.OrderBy(x => x.Date).ToList());  
             }
 
             return View(entry);
@@ -148,19 +145,14 @@ namespace NtrTrs.Controllers
 
         public IActionResult Edit(DateTime Date, int Id)
         {
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntrysService.getFileNameFromDate(userName, Date);
-
             try {
-                MonthModel monthData = EntrysService.getMonthData(filePath);
-                EntryModel entryModel = monthData.Entries.FirstOrDefault(x => x.Id == Id);
+                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+                Entry entry = _entryService.GetEntryById(Id);
 
                 this.addActivitiesToView();
                 ViewData["Frozen"] = monthData.Frozen;
 
-                return View(entryModel);
-            } catch (System.IO.FileNotFoundException) {
-                return View("BadRequest");
+                return View(entry);
             } 
             catch (Exception) {
                 return View("Error");
@@ -169,104 +161,95 @@ namespace NtrTrs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int Id, [Bind("Id,Date,Code,Subcode,Time,Description")] EntryModel entryModel)
+        public IActionResult Edit(int Id, string Code, [Bind("Date,Subcode,Time,Description")] Entry entry)
         {
             this.addActivitiesToView();
-            ViewData["DateTime"] = entryModel.Date;
+            ViewData["DateTime"] = entry.Date;
 
-            if (ModelState.IsValid)  {  
-                string userName = FileParser.getLoggedUser();
+            if (ModelState.IsValid)  {
+                MonthEntry monthData = _monthEntryService.GetMonthData(entry.Date);
 
-                string filePath = EntrysService.getFileNameFromDate(userName, entryModel.Date);
-
-                try {
-                    List<EntryModel> monthEntries = null;
-                    MonthModel monthData = EntrysService.getMonthData(filePath);
+                if (monthData != null)
+                {
                     bool frozen = monthData.Frozen;
                     if(frozen) {
                         return View("BadRequest");
                     }
-                    monthEntries = monthData.Entries;
-
-                    int index = monthEntries.FindIndex(x => x.Id == Id);
-                    monthEntries[index] = entryModel;
-
-                    FileParser.writeMonth(monthData, filePath);
+                    else
+                    {
+                        _entryService.EditEntry(Id, Code, entry.Date, entry.Subcode, entry.Time, entry.Description);
+                    }
+                    string userName = "";
+                    User user = _userService.GetLoggedUser();
+                    
+                    if (user != null)
+                    {
+                        userName = user.Name;
+                    }
 
                     ViewData["UserName"] = userName;
                     ViewData["Frozen"] = frozen;
-                    return View("Index", monthEntries);
-                } catch (System.IO.FileNotFoundException) {
-                    return View("BadRequest");
-                } catch(Exception) {
-                    return View("Error");
+                    return View("Index", _monthEntryService.GetMonthData(entry.Date).Entries.OrderBy(x => x.Date).ToList());
                 }
-
             }
-            return View(entryModel);
+            return View(entry);
         }
 
         public IActionResult Delete(DateTime Date, int Id)
         {
             this.addActivitiesToView();
 
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntrysService.getFileNameFromDate(userName, Date);
-
-            EntryModel entryModel = null;
             try {
-                entryModel = EntrysService.getMonthEntries(filePath).FirstOrDefault(x => x.Id == Id);
-            } catch (System.IO.FileNotFoundException) {
-                return View("BadRequest");
-            } catch (Exception) {
-                return View("Error");
-            }
-            if (entryModel == null) {
-                return View("BadRequest");
-            }
-            return View(entryModel);
+                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+                Entry entry = _entryService.GetEntryById(Id);
 
-        }
+                this.addActivitiesToView();
+                ViewData["Frozen"] = monthData.Frozen;
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(DateTime Date, int Id)
-        {
-            string userName = FileParser.getLoggedUser();
-
-            string filePath = EntrysService.getFileNameFromDate(userName, Date);
-
-            try {
-                List<EntryModel> monthEntries = null;
-                MonthModel monthData = EntrysService.getMonthData(filePath);
-                bool frozen = monthData.Frozen;
-                if(frozen) {
-                    return View("BadRequest");
-                }
-
-                monthEntries = monthData.Entries;
-                monthEntries.RemoveAll(x => x.Id == Id);
-
-                FileParser.writeMonth(monthData, filePath);
-
-
-                ViewData["DateTime"] = Date;
-                ViewData["UserName"] = userName;
-                ViewData["Frozen"] = frozen;
-
-                return View("Index", monthEntries); 
-            } catch (System.IO.FileNotFoundException) {
-                return View("BadRequest");
+                return View(entry);
             } 
             catch (Exception) {
                 return View("Error");
             }
         }
 
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(DateTime Date, int Id)
+        {
+            this.addActivitiesToView();
+            ViewData["DateTime"] = Date;
+
+            if (ModelState.IsValid)  {
+                MonthEntry monthData = _monthEntryService.GetMonthData(Date);
+
+                if (monthData != null)
+                {
+                    bool frozen = monthData.Frozen;
+                    if(frozen) {
+                        return View("BadRequest");
+                    }
+                    else
+                    {
+                        _entryService.DeleteEntry(Id);
+                    }
+                    string userName = "";
+                    User user = _userService.GetLoggedUser();
+                    
+                    if (user != null)
+                    {
+                        userName = user.Name;
+                    }
+
+                    ViewData["UserName"] = userName;
+                    ViewData["Frozen"] = frozen;
+                    return View("Index", _monthEntryService.GetMonthData(Date).Entries.OrderBy(x => x.Date).ToList());
+                }
+            }
+            return View("BadRequest");
+        }
         private void addActivitiesToView() {
             List<Activity> activities = _activityService.GetActiveActivities();
-            // ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-            // List<ActivityModel> activities = activityList.Activities.Where(a => a.Active == true).ToList();
             ViewData["Activities"] = activities;
         }
 
