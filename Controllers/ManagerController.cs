@@ -13,8 +13,7 @@ namespace NtrTrs.Controllers
         private readonly UserService _userService;
         private readonly MonthEntryService _monthEntryService;
         private readonly ActivityService _activityService;
-
-        private readonly EntryService _entryService;
+        private readonly EntryService _entryService;    
 
         public ManagerController(
                         UserService userService, 
@@ -92,27 +91,28 @@ namespace NtrTrs.Controllers
 
         public IActionResult SelectUser(string Code) {
             List<MonthEntry> monthData = _monthEntryService.GetAllMonthsData();
-            // List<MonthWithUserModel> monthsDataWithUser = this.readMonthsDataWithUser();
+
             // Accepted month
             monthData = monthData.Where(m => m.Frozen == true).ToList();
             monthData = monthData.Where(e => e.Entries.Any(x => x.Activity.Code == Code)).ToList();
 
-            List<UserModel> users = new List<UserModel>();
-            // foreach (var month in monthData) {
-            //     var user = new UserModel {Name = month.Entries};
+            List<UserViewModel> users = new List<UserViewModel>();
+            foreach (var month in monthData) {
+                foreach (var entry in month.Entries)
+                {
+                    var user = new UserViewModel {Name = entry.User.Name};
+                    if(!users.Any(u => u.Name == user.Name)) {
+                        users.Add(user);
+                    }
+                }
+            }
 
-            //     if(!users.Any(u => u.Name == user.Name)) {
-            //         users.Add(user);
-            //     }
-            // }
-
-            // ViewData["Users"] = users;
             ViewData["Code"] = Code;
-            return View();
+            return View(users);
         }
 
         public IActionResult UserEntries(string Code, string UserName) {
-            List<ManagerViewModel> managerList = this.getListForManager(Code, UserName);
+            List<ManagerViewModel> managerList = _monthEntryService.GetListForManager(Code, UserName);
 
             ViewData["User"] = UserName;
             ViewData["Code"] = Code;
@@ -133,122 +133,24 @@ namespace NtrTrs.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Accept(string UserName, string Code, DateTime Date, [Bind("AcceptedTime")] ManagerViewModel accepted)
         {
-            string filePath = EntrysService.getFileNameFromDate(UserName, Date);
+            Activity activity = _activityService.GetActivityByCode(Code);
 
-            if (System.IO.File.Exists(filePath)) {
-                MonthModel monthData = EntrysService.GetMonthDataForUser(filePath);
-                AcceptedEntryModel acceptedModel = new AcceptedEntryModel {Code = Code, Time = accepted.AcceptedTime};
-                
-                if (monthData.Accepted != null && monthData.Accepted.Count != 0) {
-                    var monthAccepted = monthData.Accepted;
+            if (activity == null)
+            {
+                return View("BadRequest");
+            }
 
-                    int index = monthAccepted.FindIndex(x => x.Code == Code);
-                    if(index > 0) {
-                        monthAccepted[index] = acceptedModel;
-                    } else {
-                        monthData.Accepted = new List<AcceptedEntryModel>();
-                        monthData.Accepted.Add(acceptedModel);
-                    }
-                } else {
-                    monthData.Accepted = new List<AcceptedEntryModel>();
-                    monthData.Accepted.Add(acceptedModel);
-                }
-
-                FileParser.writeMonth(monthData, filePath);
-                } 
+            User loggedUser = _userService.GetLoggedUser();
+            _monthEntryService.CreateAcceptedEntry(activity, Date, loggedUser, accepted.AcceptedTime);
 
             
             ViewData["User"] = UserName;
 
-            List<ManagerViewModel> managerList = this.getListForManager(Code, UserName);
+            List<ManagerViewModel> managerList = _monthEntryService.GetListForManager(Code, UserName);
 
             ViewData["User"] = UserName;
             ViewData["Code"] = Code;
             return View("UserEntries", managerList);
-        }
-        private bool validateIfUserIsManager(string code, string userName) {
-            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
-
-            return activities.Activities.Where(a => a.Code == code).FirstOrDefault().Manager.ToLower() == userName.ToLower();
-        }
-
-        private List<MonthWithUserModel> readMonthsDataWithUser() {
-            List<MonthWithUserModel> allMonthsDataWithUser = new List<MonthWithUserModel>();
-            string[] filePaths = 
-            Directory.GetFiles("Data/entries", "*.json");
-
-            foreach (var filePath in filePaths) {
-                string userName = filePath.Split("/")[^1].Split("-")[0];
-                MonthWithUserModel monthData = FileParser.readJson<MonthWithUserModel>(filePath);
-                monthData.User = userName;
-                allMonthsDataWithUser.Add(monthData);
-            }
-
-            return allMonthsDataWithUser;
-        }
-
-        private List<ManagerViewModel> getListForManager(string code, string userName) {
-            List<MonthWithUserModel> monthsDataWithUser = this.readMonthsDataWithUser();
-            // Accepted month
-            monthsDataWithUser = monthsDataWithUser.Where(m => m.Frozen == true && m.User == userName).ToList();
-
-            List<ManagerViewModel> managerList = new List<ManagerViewModel>();
-
-            foreach(var month in monthsDataWithUser) {
-                managerList.AddRange(month.Entries
-                    .Where(en => en.Code == code)
-                    .GroupBy(en => en.Code)
-                    .Select(ml => new ManagerViewModel {
-                        TotalTime = ml.Sum(c => c.Time), 
-                        Date = ml.Select(a => a.Date).FirstOrDefault()}));
-
-                if (month.Accepted != null) {
-                    var accepted = month.Accepted.Where(a => a.Code == code).FirstOrDefault();
-
-                    if(accepted != null ){
-                        foreach(var m in managerList) {
-                            int acceptedTime = accepted.Time;
-                            m.AcceptedTime = acceptedTime;
-                        }
-
-
-                    }
-            }
-            }
-
-            return managerList;
-        }
-
-        private List<MonthModel> readAllMonthsAllUsersData() {
-            List<MonthModel> allMonthsData = new List<MonthModel>();
-            string[] filePaths = 
-            Directory.GetFiles("Data/entries", "*.json");
-
-            foreach (var filePath in filePaths) {
-                MonthModel monthData = FileParser.readJson<MonthModel>(filePath);
-                allMonthsData.Add(monthData);
-            }
-
-            return allMonthsData;
-        }
-
-        private List<EntryModel> getEntriesFromAllMonths(List<MonthModel> allMonthsData) {
-            List<EntryModel> allEntries = new List<EntryModel>();
-
-            foreach(var month in allMonthsData) {
-                allEntries.AddRange(month.Entries);
-            }
-
-            return allEntries;
-        }
-
-        private ActivityModel getActivityByCode(string code) {
-            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-            return activityList.Activities.FirstOrDefault(a => a.Code == code);
-        }
-        private List<ActivityModel> getManagerActivities(string name) {
-            ActivityList activityList = FileParser.readJson<ActivityList>("Data/activity.json");
-            return activityList.Activities.Where(a => a.Manager.ToLower() == name.ToLower()).ToList();
         }
     }
 }

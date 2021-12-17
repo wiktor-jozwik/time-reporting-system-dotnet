@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;  
+using System.Linq;
 
 namespace NtrTrs
 {
@@ -46,10 +47,36 @@ namespace NtrTrs
              .Property(b => b.LoggedIn)
              .HasDefaultValue(false);
         }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && (
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                }
+            }
+
+            return base.SaveChanges();
+        }
     }
 
+    public class BaseEntity{ 
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }    
+}
+
     [Table("users")]
-    public class User
+    public class User : BaseEntity
     {
         [Column("id")]
         public int Id { get; set; }
@@ -64,7 +91,7 @@ namespace NtrTrs
     }
 
     [Table("entries")]
-    public class Entry
+    public class Entry : BaseEntity
     {
 
         [Column("id")]
@@ -94,7 +121,7 @@ namespace NtrTrs
     }
 
     [Table("accepted_entries")]
-    public class AcceptedEntry
+    public class AcceptedEntry : BaseEntity
     {
         [Column("id")]
         public int Id { get; set; }
@@ -106,7 +133,7 @@ namespace NtrTrs
     }
 
     [Table("activities")]
-    public class Activity
+    public class Activity : BaseEntity
     {        
         [Column("id")]
         public int Id { get; set; }
@@ -128,7 +155,7 @@ namespace NtrTrs
     }
 
     [Table("subactivities")]
-    public class Subactivity
+    public class Subactivity : BaseEntity
     {
         [Column("id")]
         public int Id { get; set; }
@@ -139,7 +166,7 @@ namespace NtrTrs
     }
 
     [Table("month_entries")]
-    public class MonthEntry
+    public class MonthEntry : BaseEntity
     {
         [Column("id")]
         public int Id { get; set; }

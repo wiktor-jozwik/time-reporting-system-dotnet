@@ -8,7 +8,7 @@ namespace NtrTrs.Models
     {
         public List<User> Users { get; set;}
     }
-    public class UserModel
+    public class UserViewModel
     {
         public string Name { get; set; }
     }

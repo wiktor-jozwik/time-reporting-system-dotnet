@@ -11,7 +11,7 @@ namespace NtrTrs.Controllers
         private readonly UserService _userService;
         private readonly MonthEntryService _monthEntryService;
 
-                public ReportController(
+        public ReportController(
                         UserService userService, 
                         MonthEntryService monthEntryService) 
         {
