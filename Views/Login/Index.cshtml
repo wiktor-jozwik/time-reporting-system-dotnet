@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Login Page";
-    UserList users = (UserList) ViewData["Users"];
+    List<User> users = (List<User>) ViewData["Users"];
     }
 
 <div class="text-center">
@@ -10,10 +10,10 @@
                 <div class="row">
                     <select name="userName" class="custom-select">
                     @{
-                        if (users == null || users.Users.Count == 0) {
+                        if (users == null || users.Count == 0) {
                             <h3 class="display-4">There are no users in system.</h3>
                         } else {
-                            foreach(UserModel user in users.Users) {
+                            foreach(User user in users) {
                                 <option>@user.Name</option>
                             }
                         }

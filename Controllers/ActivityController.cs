@@ -1,19 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
-using NtrTrs.Models;
+using NtrTrs.Services;
 
 
 namespace NtrTrs.Controllers
 {
     public class ActivityController : Controller
     {
-        public IActionResult Index() {            
-            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
+        private readonly UserService _userService;
+        private readonly ActivityService _activityService;        
 
-            return View(activities.Activities);
+        public ActivityController(UserService userService, ActivityService activityService)
+        {
+            _userService = userService;
+            _activityService = activityService;
+        }
+        public IActionResult Index() {            
+            List<Activity> activities = _activityService.GetAllActivities();
+
+            return View(activities);
         }
 
         public IActionResult Create()
@@ -23,15 +29,20 @@ namespace NtrTrs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(string sub, [Bind("Id,Code,Budget")] ActivityModel activityModel)
+        public IActionResult Create(string sub, [Bind("Code,Budget")] Activity activity)
         {
             if (!ModelState.IsValid) {
                 return View();
             }
 
-            if (this.checkCodeUniqueness(activityModel.Code))  {  
+            if (_activityService.CheckCodeUniqueness(activity.Code))  {  
 
-            string userName = FileParser.getLoggedUser();
+            User loggedUser = _userService.GetLoggedUser();
+
+            if (loggedUser != null) {
+                activity.Manager = loggedUser;
+            }
+
             if(sub != null) {
                 var subactivitiesFromString = sub.Split(new [] { "," }, StringSplitOptions.None);
 
@@ -41,26 +52,14 @@ namespace NtrTrs.Controllers
                     Subactivity subactivity = new Subactivity {Code = x}; 
                     subactivities.Add(subactivity);
                 }
-                activityModel.Subactivities = subactivities;
+                activity.Subactivities = subactivities;
             }
 
 
-            activityModel.Manager = userName;
-            activityModel.Active = true;
-            activityModel.Id = new Random().Next();
-
-            FileParser.appendActivity(activityModel);
+            _activityService.CreateActivity(activity);
             }
 
-            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
-
-            return View("~/Views/Activity/Index.cshtml", activities.Activities);
-        }
-
-        private bool checkCodeUniqueness(string code) {
-            ActivityList activities = FileParser.readJson<ActivityList>("Data/activity.json");
-
-            return !activities.Activities.Any(act => act.Code == code);
+            return RedirectToAction("Index");
         }
     }
 }

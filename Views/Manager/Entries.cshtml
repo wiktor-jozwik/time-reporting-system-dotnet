@@ -3,13 +3,13 @@
     int budget = (int) ViewData["Budget"];
     bool isProjectActive = (bool) ViewData["Active"];
 }
-@model IEnumerable<NtrTrs.Models.EntryModel>
+@model IEnumerable<Entry>
 
 <div class="container">
 
     <div class="text-center">
             @if (Model != null && Model.Count() != 0) {
-                <h4 class="display-4">@Html.Raw(String.Format("Activity {0}", @Model.FirstOrDefault().Code))</h4>
+                <h4 class="display-4">@Html.Raw(String.Format("Activity {0}", @Model.FirstOrDefault().Activity.Code))</h4>
                 
                 int index = 0;
 
@@ -45,10 +45,10 @@
 
 
                 <div class="form-group d-flex justify-content-between">
-                    <a href="@Url.Action("CloseProject", "Manager", new { Code = @Model.FirstOrDefault().Code })" class="btn btn-danger">
+                    <a href="@Url.Action("CloseProject", "Manager", new { Code = @Model.FirstOrDefault().Activity.Code })" class="btn btn-danger">
                         Close project
                     </a>
-                    <a href="@Url.Action("SelectUser", "Manager", new { Code = @Model.FirstOrDefault().Code })" class="btn btn-primary">
+                    <a href="@Url.Action("SelectUser", "Manager", new { Code = @Model.FirstOrDefault().Activity.Code })" class="btn btn-primary">
                         Get User Entries
                     </a>
                 </div>

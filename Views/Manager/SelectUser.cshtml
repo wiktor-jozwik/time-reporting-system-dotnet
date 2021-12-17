@@ -1,8 +1,9 @@
 @{
     ViewData["Title"] = "Login Page";
-    List<UserModel> users = (List<UserModel>) ViewData["Users"];
     string Code = (string) ViewData["Code"];
     }
+
+@model IEnumerable<NtrTrs.ViewModels.UserViewModel>
 
 <div class="text-center">
     <h3 class="display-4">Select User</h3>
@@ -12,10 +13,10 @@
                 <div class="row">
                     <select name="UserName" class="custom-select">
                     @{
-                        if (users == null || users.Count == 0) {
+                        if (Model == null || Model.Count() == 0) {
                             <h3 class="display-4">No user logged time in this project</h3>
                         } else {
-                            foreach(UserModel user in users) {
+                            foreach(UserViewModel user in Model) {
                                 <option>@user.Name</option>
                             }
                         }

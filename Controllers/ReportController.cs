@@ -1,13 +1,26 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NtrTrs.Models;
-using System.Linq;
+using NtrTrs.ViewModels;
+using NtrTrs.Services;
 
 namespace NtrTrs.Controllers
 {
     public class ReportController : Controller
     {
+        private readonly UserService _userService;
+        private readonly MonthEntryService _monthEntryService;
+        private readonly EntryService _entryService;
+
+        public ReportController(
+                        UserService userService, 
+                        MonthEntryService monthEntryService,
+                        EntryService entryService) 
+        {
+            _userService = userService;
+            _monthEntryService = monthEntryService;
+            _entryService = entryService;
+        }
         public IActionResult Index(string dateString = null) {
             DateTime dateTime;
 
@@ -15,87 +28,64 @@ namespace NtrTrs.Controllers
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = EntryService.getRequestedDateTime(dateString);
-
+                    dateTime = _entryService.GetRequestedDateTime(dateString);
                 } catch (System.FormatException) {
                     return View("Error");
                 }
             }
             List<ReportViewModel> monthlyReport = null;
 
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName.ToLower(), dateTime);
-            try {
-                MonthModel monthData = EntryService.getMonthData(filePath);
-                ViewData["Frozen"] = monthData.Frozen;
-
-                monthlyReport = this.getMontlyReport(monthData);
-
-
-            } catch (System.IO.FileNotFoundException) {
-                monthlyReport = null;
-
-            } catch (Exception e) {
-                System.Console.WriteLine(e.Message);
+            User loggedUser = _userService.GetLoggedUser();
+            if (loggedUser == null)
+            {
                 return View("Error");
             }
             ViewData["DateTime"] = dateTime;
-            ViewData["UserName"] = userName;
-            return View(monthlyReport);
+            ViewData["UserName"] = loggedUser.Name;
+
+            MonthEntry monthData = _monthEntryService.GetMonthDataForUser(dateTime, loggedUser);
+
+            if (monthData != null)
+            {
+                ViewData["Frozen"] = monthData.Frozen;
+
+                monthlyReport = _monthEntryService.GetMontlyReport(monthData);
+
+                return View(monthlyReport);
+            }
+
+            return View();
         }
 
         public IActionResult Submit(DateTime Date) {
-            string userName = FileParser.getLoggedUser();
-            string filePath = EntryService.getFileNameFromDate(userName, Date);
+            User loggedUser = _userService.GetLoggedUser();
+            if (loggedUser == null)
+            {
+                return View("Error");
+            }
 
 
             List<ReportViewModel> monthlyReport = null;
-            MonthModel monthData = EntryService.getMonthData(filePath);
+            MonthEntry monthData = _monthEntryService.GetMonthDataForUser(Date, loggedUser);
 
             bool frozen = monthData.Frozen;
                 if(frozen) {
+                    string cause = "Month is already accepted. Try again!";
+                    ViewData["Cause"] = cause;
                     return View("BadRequest");
                 }
 
             monthData.Frozen = true;
             ViewData["Frozen"] = monthData.Frozen;
 
-            FileParser.writeMonth(monthData, filePath);
+            _monthEntryService.FreezeMonth(monthData);
 
-            try {
-                monthlyReport = this.getMontlyReport(monthData);
+            monthlyReport = _monthEntryService.GetMontlyReport(monthData);
 
-            } catch (System.IO.FileNotFoundException) {
-                monthlyReport = null;
-
-            } catch (Exception) {
-                return View("Error");
-            }
             ViewData["DateTime"] = Date;
-            ViewData["UserName"] = userName;
+            ViewData["UserName"] = loggedUser.Name;
 
             return View("Index", monthlyReport);
-        }
-
-        private List<ReportViewModel> getMontlyReport(MonthModel monthData) {
-            List<ReportViewModel> monthlyReport = null;
-            monthlyReport = monthData.Entries
-                                .GroupBy(en => en.Code)
-                                .Select(mr => new ReportViewModel {
-                                    Code = mr.First().Code,
-                                    TotalTime = mr.Sum(c => c.Time),
-                                }).ToList();
-
-            if (monthData.Accepted != null) {
-                foreach(var m in monthlyReport) {
-                    var acceptedFound = monthData.Accepted.Where(e => e.Code == m.Code).FirstOrDefault(); 
-                    if (acceptedFound != null) {
-                        m.AcceptedTime = acceptedFound.Time;
-                    }
-                }
-            }
-            
-            return monthlyReport;
         }
     }
 }
