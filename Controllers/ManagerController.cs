@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NtrTrs.Models;
+using NtrTrs.ViewModels;
 using NtrTrs.Services;
 using System.Linq;
 using System.IO;
@@ -33,8 +33,6 @@ namespace NtrTrs.Controllers
             return View(activities);
         }
         public IActionResult Entries(string Code) {
-            List<EntryModel> monthEntriesForAllUsers = new List<EntryModel>();
-            string userName = FileParser.getLoggedUser();
             User loggedUser = _userService.GetLoggedUser();
 
             bool valid = _activityService.ValidateIfUserIsManager(Code, loggedUser);

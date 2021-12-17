@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NtrTrs.Models;
+using NtrTrs.ViewModels;
 using NtrTrs.Services;
 
 namespace NtrTrs.Controllers

@@ -1,13 +1,8 @@
 
 using System.Collections.Generic;
 
-namespace NtrTrs.Models
+namespace NtrTrs.ViewModels
 {
-
-    public class UserList 
-    {
-        public List<User> Users { get; set;}
-    }
     public class UserViewModel
     {
         public string Name { get; set; }

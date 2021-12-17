@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Z.EntityFramework.Plus;
-using NtrTrs.Models;
+using NtrTrs.ViewModels;
 
 namespace NtrTrs.Services
 {
