@@ -75,29 +75,22 @@ namespace NtrTrs
     public DateTime UpdatedDate { get; set; }    
 }
 
-    [Table("users")]
     public class User : BaseEntity
     {
-        [Column("id")]
         public int Id { get; set; }
 
-        [Column("name")]
         public string Name { get; set; }
 
-        [Column("logged_in")]
         public bool LoggedIn { get; set; }
 
         public List<Entry> Entries { get; } = new();
     }
 
-    [Table("entries")]
     public class Entry : BaseEntity
     {
 
-        [Column("id")]
         public int Id { get; set; }
 
-        [Column("date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]
         [Required(ErrorMessage = "Please enter date")]  
@@ -107,74 +100,56 @@ namespace NtrTrs
 
         public MonthEntry MonthEntry {get; set; }
 
-        [Column("subcode")]
         public string Subcode { get; set; }
 
-        [Column("time")]
         [Required(ErrorMessage = "Please enter time")]  
         public int Time { get; set; }
 
-        [Column("description")]
         public string Description { get; set; }
 
         public User User { get; set; }
     }
 
-    [Table("accepted_entries")]
     public class AcceptedEntry : BaseEntity
     {
-        [Column("id")]
         public int Id { get; set; }
 
         public Activity Activity { get; set; }
 
-        [Column("time")]
         public int Time { get; set; }
     }
 
-    [Table("activities")]
     public class Activity : BaseEntity
     {        
-        [Column("id")]
         public int Id { get; set; }
         
-        [Column("code")]
         [Required(ErrorMessage = "Please enter code")]  
         public string Code { get; set; }
         public User Manager { get; set; }
 
-        [Column("budget")]
         [Required(ErrorMessage = "Please enter budget")]  
         public int Budget { get; set; }
 
-        [Column("active")]
         public bool Active { get; set; }
         public List<Subactivity> Subactivities { get; set; }
 
         public List<Entry> Entries { get; } = new();
     }
 
-    [Table("subactivities")]
     public class Subactivity : BaseEntity
     {
-        [Column("id")]
         public int Id { get; set; }
 
-        [Column("code")]
         [Required(ErrorMessage = "Please enter code")]  
         public string Code { get; set; }
     }
 
-    [Table("month_entries")]
     public class MonthEntry : BaseEntity
     {
-        [Column("id")]
         public int Id { get; set; }
 
-        [Column("date")]
         public DateTime Date { get; set; }
 
-        [Column("frozen")]
         public bool Frozen { get; set; }
 
         public List<Entry> Entries { get; set; }

@@ -81,7 +81,13 @@ namespace NtrTrs.Services
                 _context.Entries.Remove(entryToRemove);
                 _context.SaveChanges();
             }
+        }
 
+
+        public DateTime GetRequestedDateTime(string dateString) {
+            DateTime dateTime =  DateTime.ParseExact(dateString, "yyyy-MM", null);
+            
+            return dateTime;
         }
 
         private Entry _GetEntryById(int id)

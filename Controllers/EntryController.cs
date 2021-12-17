@@ -36,7 +36,7 @@ namespace NtrTrs.Controllers
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = EntrysService.getRequestedDateTime(dateString);
+                    dateTime = _entryService.GetRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
                     return View("BadRequest");

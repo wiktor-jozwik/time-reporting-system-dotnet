@@ -6,11 +6,6 @@ using Newtonsoft.Json;
 using NtrTrs.Models;
 
 public static class EntrysService {
-        public static DateTime getRequestedDateTime(string dateString) {
-            DateTime dateTime =  DateTime.ParseExact(dateString, "yyyy-MM", null);
-            
-            return dateTime;
-        }
 
         public static string getFileNameFromDate(string name, DateTime date) {
             return $"Data/entries/{name}-{date.ToString("yyyy-MM")}.json";

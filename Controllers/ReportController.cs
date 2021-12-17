@@ -10,13 +10,16 @@ namespace NtrTrs.Controllers
     {
         private readonly UserService _userService;
         private readonly MonthEntryService _monthEntryService;
+        private readonly EntryService _entryService;
 
         public ReportController(
                         UserService userService, 
-                        MonthEntryService monthEntryService) 
+                        MonthEntryService monthEntryService,
+                        EntryService entryService) 
         {
             _userService = userService;
             _monthEntryService = monthEntryService;
+            _entryService = entryService;
         }
         public IActionResult Index(string dateString = null) {
             DateTime dateTime;
@@ -25,7 +28,7 @@ namespace NtrTrs.Controllers
                 dateTime = DateTime.Now;
             } else {
                 try {
-                    dateTime = EntrysService.getRequestedDateTime(dateString);
+                    dateTime = _entryService.GetRequestedDateTime(dateString);
 
                 } catch (System.FormatException) {
                     return View("Error");

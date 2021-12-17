@@ -73,42 +73,29 @@ namespace NtrTrs.Services
         {
             MonthEntry monthData = GetMonthDataForUser(date, user);
 
-            // AcceptedEntry acceptedEntry = new AcceptedEntry {Activity = activity, Time = time};
-            
-            // if (monthData.Accepted != null && monthData.Accepted.Count != 0) {
-                // monthData.Accepted = acceptedEntry;
+            AcceptedEntry accepted = monthData.Accepted
+                                            .Where(m => m.Activity == activity)
+                                            .FirstOrDefault();
+            if (accepted != null)
+            {
+                accepted.Time = time;
 
-                AcceptedEntry acc = new AcceptedEntry(){Activity = activity, Time = time};
-
-                _context.AcceptedEntries.Add(acc);
-
-                // AcceptedEntry acc = _context.AcceptedEntries.Add(new AcceptedEntry(){Activity = activity, Time = time})
-
+                _context.Update(accepted);
+            }
+            else
+            {
+                accepted = new AcceptedEntry(){Activity = activity, Time = time};
 
                 if (monthData.Accepted == null)
                 {
                     monthData.Accepted = new List<AcceptedEntry>();
                 }
-                // if (monthData.Accepted == null)
-                // {
-                monthData.Accepted.Add(acc);
-                // }
-                // monthData.Accepted.Add(acceptedEntry);
+                monthData.Accepted.Add(accepted);
 
                 _context.Update(monthData);
-                _context.SaveChanges();
+            }
 
-                // int index = monthAccepted.FindIndex(x => x.Activity.Code == activity.Code);
-                // if(index > 0) {
-                    // monthAccepted[index] = acceptedModel;
-                // } else {
-                    // monthData.Accepted = new List<AcceptedEntryModel>();
-                    // monthData.Accepted.Add(acceptedModel);
-                // }
-            // } 
-
-            // FileParser.writeMonth(monthData, filePath);
-
+            _context.SaveChanges();
         }
 
         public List<ReportViewModel> GetMontlyReport(MonthEntry monthData)

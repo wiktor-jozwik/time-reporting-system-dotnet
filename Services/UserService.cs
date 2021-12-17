@@ -32,7 +32,7 @@ namespace NtrTrs.Services
             }
         }
 
-        public User GetLoggedUser(string userName)
+        public User GetUserByName(string userName)
         {
             return _GetUserByName(userName);
         }

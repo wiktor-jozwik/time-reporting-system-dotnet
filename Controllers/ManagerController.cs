@@ -140,8 +140,8 @@ namespace NtrTrs.Controllers
                 return View("BadRequest");
             }
 
-            User loggedUser = _userService.GetLoggedUser();
-            _monthEntryService.CreateAcceptedEntry(activity, Date, loggedUser, accepted.AcceptedTime);
+            User user = _userService.GetUserByName(UserName);
+            _monthEntryService.CreateAcceptedEntry(activity, Date, user, accepted.AcceptedTime);
 
             
             ViewData["User"] = UserName;
