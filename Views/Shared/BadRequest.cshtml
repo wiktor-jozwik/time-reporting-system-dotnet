@@ -1,7 +1,13 @@
 @{
     ViewData["Title"] = "Bad Request";
+    string Cause = (string) ViewData["Cause"];
 }
 
 <div class="text-center">
-    <h1 class="text">Error - bad request</h1>
+    @if(Cause != null) {
+        <h1 class="text">Error - @Cause</h1>
+    }
+    else {
+        <h1 class="text">Error - Bad Request</h1>
+    }
 </div>

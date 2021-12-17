@@ -1,7 +1,9 @@
 @{
     ViewData["Title"] = "Select Project";
-    List<ActivityModel> activities = (List<ActivityModel>) ViewData["Activities"];
     }
+
+@model IEnumerable<Activity>
+
 
 <div class="text-center">
     <h3 class="display-4">Select Project</h3>
@@ -10,17 +12,17 @@
                 <div class="row">
                     <select name="Code" class="custom-select">
                     @{
-                        if (activities == null || activities.Count == 0) {
+                        if (Model == null || Model.Count() == 0) {
                             <h3 class="display-4">There are no users in system.</h3>
                         } else {
-                            foreach(ActivityModel a in activities) {
+                            foreach(Activity a in Model) {
                                 <option>@a.Code</option>
                             }
                         }
                     }
                     </select> 
                     <div class="col-xs-6 mt-3">
-                        <input type="submit" value="Submit" class="btn btn-primary" />
+                        <input type="submit" value="Get Project Entries" class="btn btn-primary" />
                     </div>
                 </div>  
             </div>

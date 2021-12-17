@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Login Page";
+    string Code = (string) ViewData["Code"];
+    }
+
+@model IEnumerable<NtrTrs.ViewModels.UserViewModel>
+
+<div class="text-center">
+    <h3 class="display-4">Select User</h3>
+        <form asp-controller="Manager" asp-action="UserEntries" method="get">
+            <div class="col-12">
+                <input type="hidden" id="Code" name="Code" value="@Code" /> 
+                <div class="row">
+                    <select name="UserName" class="custom-select">
+                    @{
+                        if (Model == null || Model.Count() == 0) {
+                            <h3 class="display-4">No user logged time in this project</h3>
+                        } else {
+                            foreach(UserViewModel user in Model) {
+                                <option>@user.Name</option>
+                            }
+                        }
+                    }
+                    </select> 
+                    <div class="col-xs-6 mt-3">
+                        <input type="submit" value="User entries" class="btn btn-primary" />
+                    </div>
+                </div>  
+            </div>
+        </form>
+</div>

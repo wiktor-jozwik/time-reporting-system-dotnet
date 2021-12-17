@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace NtrTrs.Models
+namespace NtrTrs.ViewModels
 {
     public class ReportViewModel
     {

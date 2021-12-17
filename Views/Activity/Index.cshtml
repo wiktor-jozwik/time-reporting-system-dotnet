@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Activities page";
 }
-@model IEnumerable<NtrTrs.Models.ActivityModel>
+@model IEnumerable<Activity>
 
 <div class="container">
 
@@ -9,7 +9,7 @@
         @{
             int index = 0;
             int maxSubactivities = 0;
-            foreach (ActivityModel activity in Model) {
+            foreach (Activity activity in Model) {
                 if (activity.Subactivities != null) {
                     if (activity.Subactivities.Count > maxSubactivities) {
                         maxSubactivities = activity.Subactivities.Count;
@@ -39,7 +39,7 @@
                             <tr>
                                 <th scope="row">@index</th>
                                 <td>@Html.DisplayFor(modelItem => activity.Code)</td>
-                                <td>@Html.DisplayFor(modelItem => activity.Manager)</td>
+                                <td>@Html.DisplayFor(modelItem => activity.Manager.Name)</td>
                                 <td>@Html.DisplayFor(modelItem => activity.Budget)</td>
                                 <td>@Helpers.ToFriendlyString(activity.Active)</td>
                                 @if(activity.Subactivities != null) {

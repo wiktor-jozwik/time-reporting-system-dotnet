@@ -7,7 +7,7 @@
         isFrozenMonth = (bool) ViewData["Frozen"];
     }
 }
-@model IEnumerable<NtrTrs.Models.EntryModel>
+@model IEnumerable<Entry>
 
 <div class="container">
 
@@ -40,7 +40,7 @@
                     <thead>
                         <tr>
                         <th scope="col">#</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model.Code)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Activity.Code)</th>
                         <th scope="col">@Html.DisplayNameFor(model => model.Date)</th>
                         <th scope="col">@Html.DisplayNameFor(model => model.Subcode)</th>
                         <th scope="col">@Html.DisplayNameFor(model => model.Time)</th>
@@ -57,14 +57,14 @@
                         <tbody>
                             <tr>
                                 <th scope="row">@entryIndex</th>
-                                <td>@Html.DisplayFor(modelItem => entry.Code)</td>
+                                <td>@Html.DisplayFor(modelItem => entry.Activity.Code)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.Date)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.Subcode)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.Time)</td>
                                 <td>@Html.DisplayFor(modelItem => entry.Description)</td>
                                 @if(!isFrozenMonth) {
                                 <td>
-                                    <a asp-action="Edit" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Edit</a> 
+                                    <a asp-action="Edit" asp-route-id="@entry.Id">Edit</a> 
                                     <a asp-action="Details" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Details</a> 
                                     <a asp-action="Delete" asp-route-date="@entry.Date.ToString("MM/dd/yyyy")" asp-route-id="@entry.Id">Delete</a>
                                 </td>                              
