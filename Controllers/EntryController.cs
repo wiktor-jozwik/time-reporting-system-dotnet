@@ -10,6 +10,11 @@ namespace NtrTrs.Controllers
 {
     public class EntryController : Controller
     {
+        string ACCEPTED_CAUSE = "Month is already accepted. Try again!";
+        string ACTIVITIY_CLOSED_CAUSE = "Activity is already closed. Try again!";
+
+        string CODE_PRESENT_CAUSE = "Code of project has to be provided.";
+
         private readonly UserService _userService;
         private readonly MonthEntryService _monthEntryService;
         private readonly EntryService _entryService;
@@ -22,6 +27,7 @@ namespace NtrTrs.Controllers
             EntryService entryService
             )
         {
+
             _userService = userService;
             _monthEntryService = monthEntryService;
             _activityService = activityService;
@@ -110,6 +116,14 @@ namespace NtrTrs.Controllers
                 ViewData["DateTime"] = entry.Date;
 
                 Activity activity = _activityService.GetActivityByCode(Code);
+                if (activity != null)
+                {
+                    if (activity.Active == false)
+                    {
+                        ViewData["Cause"] = ACTIVITIY_CLOSED_CAUSE;
+                        return View("BadRequest");
+                    }
+                }
                 MonthEntry monthData = _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser);
 
                 if (monthData != null)
@@ -118,6 +132,7 @@ namespace NtrTrs.Controllers
 
                     if (frozen)
                     {
+                        ViewData["Cause"] = ACCEPTED_CAUSE;
                         return View("BadRequest");
                     }
                 } 
@@ -170,7 +185,22 @@ namespace NtrTrs.Controllers
             this.addActivitiesToView();
             ViewData["DateTime"] = entry.Date;
 
+            if (Code == null)
+            {
+                ViewData["Cause"] = CODE_PRESENT_CAUSE;
+                return View("BadRequest");
+            }
+
             if (ModelState.IsValid)  {
+                Activity activity = _activityService.GetActivityByCode(Code);
+                if (activity != null)
+                {
+                    if (activity.Active == false)
+                    {
+                        ViewData["Cause"] = ACTIVITIY_CLOSED_CAUSE;
+                        return View("BadRequest");
+                    }
+                }
                 User loggedUser = _userService.GetLoggedUser();
 
                 MonthEntry monthData = _monthEntryService.GetMonthDataForUser(entry.Date, loggedUser);
@@ -179,6 +209,7 @@ namespace NtrTrs.Controllers
                 {
                     bool frozen = monthData.Frozen;
                     if(frozen) {
+                        ViewData["Cause"] = ACCEPTED_CAUSE;
                         return View("BadRequest");
                     }
                     else
@@ -229,6 +260,18 @@ namespace NtrTrs.Controllers
             ViewData["DateTime"] = Date;
 
             if (ModelState.IsValid)  {
+                Entry entry = _entryService.GetEntryById(Id);
+                if (entry != null) 
+                {
+                    if (entry.Activity != null)
+                    {
+                        if (entry.Activity.Active == false)
+                        {
+                        ViewData["Cause"] = ACTIVITIY_CLOSED_CAUSE;
+                        return View("BadRequest");
+                        }
+                    }
+                }
                 User loggedUser = _userService.GetLoggedUser();
                 
                 MonthEntry monthData = _monthEntryService.GetMonthDataForUser(Date, loggedUser);
@@ -237,6 +280,7 @@ namespace NtrTrs.Controllers
                 {
                     bool frozen = monthData.Frozen;
                     if(frozen) {
+                        ViewData["Cause"] = ACCEPTED_CAUSE;
                         return View("BadRequest");
                     }
                     else

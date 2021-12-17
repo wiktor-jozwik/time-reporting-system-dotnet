@@ -71,6 +71,8 @@ namespace NtrTrs.Controllers
 
             bool active = activity.Active;
                 if(!active) {
+                    string cause = "Activity is already closed.";
+                    ViewData["Cause"] = cause;
                     return View("BadRequest");
                 }
 
@@ -135,6 +137,8 @@ namespace NtrTrs.Controllers
 
             if (activity == null)
             {
+                string cause = "Activity has not beed found.";
+                ViewData["Cause"] = cause;
                 return View("BadRequest");
             }
 

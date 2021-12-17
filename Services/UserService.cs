@@ -28,8 +28,8 @@ namespace NtrTrs.Services
             if(user != null) 
             {
                 user.LoggedIn = true;
-                _context.SaveChanges();
             }
+            _context.SaveChanges();
         }
 
         public User GetUserByName(string userName)

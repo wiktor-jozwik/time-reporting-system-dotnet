@@ -29,7 +29,6 @@ namespace NtrTrs.Controllers
             } else {
                 try {
                     dateTime = _entryService.GetRequestedDateTime(dateString);
-
                 } catch (System.FormatException) {
                     return View("Error");
                 }
@@ -71,6 +70,8 @@ namespace NtrTrs.Controllers
 
             bool frozen = monthData.Frozen;
                 if(frozen) {
+                    string cause = "Month is already accepted. Try again!";
+                    ViewData["Cause"] = cause;
                     return View("BadRequest");
                 }
 
@@ -79,15 +80,8 @@ namespace NtrTrs.Controllers
 
             _monthEntryService.FreezeMonth(monthData);
 
-            try {
-                monthlyReport = _monthEntryService.GetMontlyReport(monthData);
+            monthlyReport = _monthEntryService.GetMontlyReport(monthData);
 
-            } catch (System.IO.FileNotFoundException) {
-                monthlyReport = null;
-
-            } catch (Exception) {
-                return View("Error");
-            }
             ViewData["DateTime"] = Date;
             ViewData["UserName"] = loggedUser.Name;
 

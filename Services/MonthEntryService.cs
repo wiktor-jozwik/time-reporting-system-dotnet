@@ -134,12 +134,12 @@ namespace NtrTrs.Services
         private MonthEntry _GetMonthDataForUser(DateTime dateTime, User user)
         {
             return _context.MonthEntries
-            .Include(m => m.Accepted)
-                            .IncludeFilter(m => m.Entries.Where(e => e.User == user)
-                            .Select(e => e.Activity))
-                            .Where(m => m.Date.Month == dateTime.Month)
-                            .Where(m => m.User == user)
-                            .FirstOrDefault();
+                    .Include(m => m.Accepted)
+                                    .IncludeFilter(m => m.Entries.Where(e => e.User == user)
+                                    .Select(e => e.Activity))
+                                    .Where(m => m.Date.Month == dateTime.Month)
+                                    .Where(m => m.User == user)
+                                    .FirstOrDefault();
         }
     }
 }
